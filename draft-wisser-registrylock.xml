@@ -1,0 +1,848 @@
+<?xml version="1.0" encoding="US-ASCII"?>
+<!DOCTYPE rfc SYSTEM "rfc2629.dtd" [
+<!-- One method to get references from the online citation libraries.
+    There has to be one entity for each item to be referenced.
+    An alternate method (rfc include) is described in the references. -->
+	<!ENTITY RFC2119 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.2119.xml">
+	<!ENTITY RFC3688 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.3688.xml">
+	<!ENTITY RFC5730 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.5730.xml">
+	<!ENTITY RFC5731 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.5731.xml">
+	<!ENTITY RFC5732 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.5732.xml">
+	<!ENTITY RFC5733 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.5733.xml">
+	<!ENTITY RFC7451 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.7451.xml">
+	<!ENTITY RFC7942 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.7942.xml">
+	<!ENTITY W3C.REC-xmlschema-2-20041028 PUBLIC '' 'http://xml2rfc.ietf.org/public/rfc/bibxml4/reference.W3C.REC-xmlschema-2-20041028.xml'>
+]>
+<?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
+<!-- used by XSLT processors -->
+<!-- For a complete list and description of processing instructions (PIs),
+     please see http://xml.resource.org/authoring/README.html. -->
+<!-- Below are generally applicable Processing Instructions (PIs) that most I-Ds might want to use.
+     (Here they are set differently than their defaults in xml2rfc v1.32) -->
+<?rfc strict="yes" ?>
+<!-- give errors regarding ID-nits and DTD validation -->
+<!-- control the table of contents (ToC) -->
+<?rfc toc="yes"?>
+<!-- generate a ToC -->
+<?rfc tocdepth="4"?>
+<!-- the number of levels of subsections in ToC. default: 3 -->
+<!-- control references -->
+<?rfc symrefs="yes"?>
+<!-- use symbolic references tags, i.e, [RFC2119] instead of [1] -->
+<?rfc sortrefs="yes" ?>
+<!-- sort the reference entries alphabetically -->
+<!-- control vertical white space
+     (using these PIs as follows is recommended by the RFC Editor) -->
+<?rfc compact="yes" ?>
+<!-- do not start each main section on a new page -->
+<?rfc subcompact="yes"?>
+<!-- keep one blank line between list items -->
+<?rfc comments="yes" ?>
+<!-- show cref output -->
+<?rfc inline="yes" ?>
+<!-- inline cref output -->
+<!-- end of list of popular I-D processing instructions -->
+<rfc category="std" docName="draft-wisser-registrylock-latest" ipr="trust200902">
+  <!-- category values: std, bcp, info, exp, and historic
+     ipr values: full3667, noModification3667, noDerivatives3667
+     you can add the attributes updates="NNNN" and obsoletes="NNNN"
+     they will automatically be output with "(if approved)" -->
+
+  <!-- ***** FRONT MATTER ***** -->
+
+<front>
+	<title abbrev="registryLock">
+		Registry Lock Extension for the Extensible Provisioning Protocol (EPP)
+	</title>
+
+	<author fullname="Ulrich Wisser" initials="U" surname="Wisser">
+		<organization>The Swedish Internet Infrastructure Foundation</organization>
+
+		<address>
+			<postal>
+				<street>Box 92073</street>
+				<city>Stockholm</city>
+				<code>12007</code>
+				<country>SE</country>
+			</postal>
+			<email>ulrich@wisser.se</email>
+			<uri>https://www.internetstiftelsen.se</uri>
+		</address>
+	</author>
+
+	<date day="24" month="March" year="2020"/>
+
+	<area>Applications and Real-Time Area</area>
+
+	<workgroup>Registration Protocols Extensions</workgroup>
+
+	 <keyword>EPP</keyword>
+	 <keyword>Extensible Provisioning Protocol</keyword>
+	 <keyword>registrylock</keyword>
+	 <keyword>registry lock</keyword>
+
+	<abstract>
+		<t>
+			This extensions defines an additional protective layer for changes
+			to domain <xref target="RFC5731" />, host <xref target="RFC5732" />
+			and contact <xref target="RFC5733" /> objects managed through EPP.
+		</t>
+		<t>
+			EPP allows changes to objects only by the sponsoring client. EPP
+			objects are usually managed by the sponsoring client on behalf of
+			the sponsoring clients customers. All of these interactions are
+			ususally fully automated.
+		</t>
+		<t>
+			In case of a system breach, there is no protection in EPP to
+			changes to any object by the intruder.
+		</t>
+		<t>
+			This extension defines a protective layer that aims to break
+			automated changes and work flows by requiring manual intervention
+			by the sponsoring client or it's customers.
+		</t>
+	</abstract>
+
+</front>
+
+<middle>
+	<section title="Introduction">
+		<t>
+			This extensions defines an additional protective layer for changes
+			to domain <xref target="RFC5731" />, host <xref target="RFC5732" />
+			and contact <xref target="RFC5733" /> objects managed through EPP.
+		</t>
+		<t>
+			EPP allows changes to objects only by the sponsoring client. EPP
+			objects are usually managed by the sponsoring client on behalf of
+			the sponsoring clients customers. All of these interactions are
+			ususally fully automated.
+		</t>
+		<t>
+			In case of a system breach, there is no protection in EPP to
+			changes to any object by the intruder.
+		</t>
+		<t>
+			This extension defines a protective layer that aims to break
+			automated changes and work flows by requiring manual intervention
+			by the sponsoring client or it's customers.
+		</t>
+
+		<section title="Conventions Used in This Document">
+			<t>
+				The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+				"SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+				document are to be interpreted as described in <xref
+				target="RFC2119">RFC 2119</xref>.
+			</t>
+			<t>
+				XML is case sensitive. Unless stated otherwise, XML specifications
+				and examples provided in this document MUST be interpreted in the
+				character case presented in order to develop a conforming
+				implementation.
+			</t>
+			<t>
+				In examples, "C:" represents lines sent by a protocol client and
+				"S:" represents lines returned by a protocol server.
+				Indentation and white space in examples are provided only to
+				illustrate element relationships
+				and are not a REQUIRED feature of this protocol.
+			</t>
+			<t>
+				"regLock" is used as an abbreviation for
+				"urn:ietf:params:xml:ns:epp:registryLock-1.0". The XML namespace
+				prefix "reglock" is used, but implementations MUST NOT depend on
+				it and instead employ a proper namespace-aware XML parser and
+				serializer to interpret and output the XML documents.
+			</t>
+		</section>
+	</section>
+
+	<section anchor="protection" title="Object Protection">
+		<t>
+			This extension provides additional protection to objects managed
+			by a sponsoring client on behalf of a registrant. This is
+			achieved by requiring additional authorization for transform
+			commands.
+		</t>
+		<t>
+			Solutions can be broadly categorized as in-band or out-of-band
+			authorizations. Where in-band authorizations would provide
+			authorization through EPP. Whereas out-of-band solutions provide
+			authorization by some other means.
+		</t>
+
+		<section anchor="password" title="Password Authorization">
+			<t>
+				In-band authorization uses the authorization possibilities provided
+				by EPP Standards <xref target="RFC5730" />, <xref target="RFC5731" />,
+				<xref target="RFC5732" /> and <xref target="RFC5733" />.
+			</t>
+			<t>
+				Registries implementing in-band authorization should consider to
+				require more secure passwords as specified in draft-ietf-regext-login-security.
+			</t>
+			<t>
+				With password authorization temporary unlock is not strictly needed.
+				Every &lt;update&gt; command could be authorized by including the credentials
+				in the command.
+			</t>
+			<t>
+				When allowing password authorizations registries MUST allow both temporary unlock
+				and including authorization in the command.
+			</t>
+		</section>
+
+		<section anchor="outband" title="Out-of-band Authorization">
+			<t>
+				Out-of-band Authorization is not covered in this document.
+				By definition out-of-band authorization will not use EPP and
+				therefore is not subject of consideration here.
+			</t>
+			<t>
+				Registries must provide means for the registrar or registrant
+				to temporarily unlock the domain or to remove registry lock
+				through some means other than EPP.
+			</t>
+			<t>
+				Any domain that is locked with out-of-band authorization MUST
+				reject password authorization with EPP response code 2201
+				"Authorization error" <xref target="RFC5730" /> section 3.
+			</t>
+		</section>
+
+		<section anchor="cmdrestrict" title="Command Execution Restrictions">
+			<t>
+				Once an object has Registry Lock enabled all transform commands
+				except &lt;renew&gt; MUST only be executed if
+				<list>
+					<t>proper authorization is provided or</t>
+					<t>the object is temporarily unlocked</t>
+				</list>
+				Otherwise the command MUST be rejected with EPP result code
+				2201 "Authorization error" <xref target="RFC5730" /> section 3.
+			</t>
+			<t>
+				The following EPP flags <xref target="RFC5731" />,
+				<xref target="RFC5732" />, <xref target="RFC5733" /> must be set.
+				<list>
+					<t>serverDeleteProhibited</t>
+					<t>serverTransferProhibited</t>
+					<t>serverUpdateProhibited</t>
+				</list>
+			</t>
+			<t>
+				If the object is unlocked the flags SHOULD be cleared and
+				the server should answer to an &lt;info&gt; request with
+				the according information.
+			    However, if the object is only temporarily unlocked, only the
+				serverUpdateProhibited flag SHOULD
+				be cleared, but in an &lt;info&gt; response the server should
+				still indicate that the object is under registry lock.
+			</t>
+			<t>
+				OPEN QUESTION: If a domain is under registry lock, can a subordinate host be updated?
+				<list>
+					<t>I got one "no" answer - hosts might not be owned by domain owner</t>
+					<t>In .se/.nu all subordinary hosts are automatically owned by the domain owner and locked if the domain is locked.</t>
+				</list>
+				We need more input!
+			</t>
+		</section>
+
+	</section>
+
+	<section anchor="attrs" title="Object Attributes">
+		<section anchor="lockstatus" title="Locking Status">
+			<t>
+				Locking Status information indicates if the additional protection
+				of Registry Lock is enabled for an object.
+			</t>
+			<t>
+				Boolean values MUST be represented in the XML Schema format described
+				in Part 2 of the W3C XML Schema recommendation
+				[W3C.REC-xmlschema-2-20010502].
+			</t>
+		</section>
+	</section>
+
+	<section anchor="commands" title="EPP Command Mapping">
+		<t>
+			A detailed description of the EPP syntax and semantics can be found
+			in the EPP core protocol specification <xref target="RFC5730" />.
+		</t>
+
+		<section anchor="eppQuery" title="EPP Query Commands">
+
+			<section anchor="check" title="EPP &lt;check&gt; Command">
+				<t>
+					This extension does not add any elements to the EPP &lt;check&gt;
+					command or &lt;check&gt; response described in the EPP
+					mappings <xref target="RFC5731" />, <xref target="RFC5732" /> or
+					<xref target="RFC5733" />.
+				</t>
+			</section>
+
+			<section anchor="info" title="EPP &lt;info&gt; Command">
+				<t>
+					This extension does not add any elements to the EPP &lt;info&gt;
+					command described in the EPP domain mapping <xref target="RFC5731" />,
+					host mapping <xref target="RFC5732" /> or contact mapping
+					<xref target="RFC5733" />  However, additional
+					elements are defined for the &lt;info&gt; response.
+				</t>
+				<t>
+					When an &lt;info&gt; command has been processed successfully,
+					the EPP &lt;resData&gt; element MUST contain child elements
+					as described in the EPP object mappings.
+				</t>
+				<t>
+					In addition, the EPP &lt;extension&gt; element
+					SHOULD contain a child &lt;regLock:infData&gt; element that
+					identifies the extension namespace the epp client has indicated
+					support for the extension in the &lt;login&gt; command.
+				</t>
+				<t>
+					The &lt;regLock:infData&gt; element contains the following child elements:
+					<list>
+						<t>
+							Exactly one &lt;locked&gt; element that indicates if
+							Registry Lock is enabled for the object.
+						</t>
+						<t>
+							An OPTIONAL &lt;unlockedUntil&gt; element if the object
+							currently can be changed by the sponsoring client. The field indicates
+							the time stamp when the lock will become active again.
+						</t>
+					</list>
+				</t>
+				<t>
+					Example &lt;domain:info&gt; Response, domain not locked
+<figure><artwork><![CDATA[
+S:<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+S:<epp xmlns="urn:ietf:params:xml:ns:epp-1.0"
+S:     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+S:  <response>
+S:    <result code="1000">
+S:      <msg>Command completed successfully</msg>
+S:    </result>
+S:    <resData>
+S:      <domain:infData
+...
+S:      </domain:infData>
+S:    </resData>
+S:    <extension>
+S:      <regLock:infData xmlns:regLock="urn:ietf:params:xml:ns:epp:registryLock-1.0">
+S:        <regLock:locked>0</regLock:locked>
+S:      </regLock:infData>
+S:    </extension>
+S:    <trID>
+S:      <clTRID>ABC-12345</clTRID>
+S:      <svTRID>54322-XYZ</svTRID>
+S:    </trID>
+S:  </response>
+S:</epp>
+]]></artwork></figure>
+				</t>
+				<t>
+					Example &lt;domain:info&gt; Response, domain locked
+<figure><artwork><![CDATA[
+S:<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+S:<epp xmlns="urn:ietf:params:xml:ns:epp-1.0"
+S:     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+S:  <response>
+S:    <result code="1000">
+S:      <msg>Command completed successfully</msg>
+S:    </result>
+S:    <resData>
+S:      <domain:infData
+...
+S:      </domain:infData>
+S:    </resData>
+S:    <extension>
+S:      <regLock:infData xmlns:regLock="urn:ietf:params:xml:ns:epp:registryLock-1.0">
+S:        <regLock:locked>1</regLock:locked>
+S:      </regLock:infData>
+S:    </extension>
+S:    <trID>
+S:      <clTRID>ABC-12345</clTRID>
+S:      <svTRID>54322-XYZ</svTRID>
+S:    </trID>
+S:  </response>
+S:</epp>
+]]></artwork></figure>
+				</t>
+				<t>
+					Example &lt;domain:info&gt; Response, domain temporary unlocked
+<figure><artwork><![CDATA[
+S:<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+S:<epp xmlns="urn:ietf:params:xml:ns:epp-1.0"
+S:     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+S:  <response>
+S:    <result code="1000">
+S:      <msg>Command completed successfully</msg>
+S:    </result>
+S:    <resData>
+S:      <domain:infData
+...
+S:      </domain:infData>
+S:    </resData>
+S:    <extension>
+S:      <regLock:infData xmlns:regLock="urn:ietf:params:xml:ns:epp:registryLock-1.0">
+S:        <regLock:locked>1</regLock:locked>
+S:        <regLock:unlockedUntil>20000101T000000+0000</regLock:unlockedUntil>
+S:      </regLock:infData>
+S:    </extension>
+S:    <trID>
+S:      <clTRID>ABC-12345</clTRID>
+S:      <svTRID>54322-XYZ</svTRID>
+S:    </trID>
+S:  </response>
+S:</epp>
+]]></artwork></figure>
+				</t>
+			</section>
+
+			<section anchor="transferreq" title="EPP &lt;transfer&gt; Command">
+				<t>
+					This extension does not add any elements to the EPP &lt;transfer&gt;
+					command or &lt;transfer&gt; response described in the EPP
+					mapping <xref target="RFC5731" />, <xref target="RFC5732" /> or
+					<xref target="RFC5733" />.
+				</t>
+			</section>
+
+		</section>
+
+		<section anchor="eppTransform" title="EPP Transform Commands">
+
+			<section anchor="create" title="EPP &lt;create&gt; Command">
+				<t>
+					This extension does add an &lt;resData&gt; element to the EPP &lt;create&gt;
+					response as described in the EPP <xref target="RFC5730" />.
+				</t>
+				<t>
+					This extension is inteded to be used within the scope of the object creation.
+					It does not define a &lt;create/&gt; command of it's own.
+				</t>
+				<t>
+					Example &lt;host:create&gt; command
+<figure><artwork><![CDATA[
+C:<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+C:<epp xmlns="urn:ietf:params:xml:ns:epp-1.0">
+C:  <command>
+C:    <create>
+C:      <host:create
+C:       xmlns:host="urn:ietf:params:xml:ns:host-1.0">
+C:        <host:name>ns1.example.com</host:name>
+C:        <host:addr ip="v4">192.0.2.2</host:addr>
+C:        <host:addr ip="v4">192.0.2.29</host:addr>
+C:        <host:addr ip="v6">1080:0:0:0:8:800:200C:417A</host:addr>
+C:      </host:create>
+C:    </create>
+C:    <extension>
+C:      <regLock:lock xmlns:regLock="urn:ietf:params:xml:ns:epp:registryLock-1.0">
+C:        <regLock:unlock>outofband</locked>
+C:      </regLock:lock>
+C:    </extension>
+C:    <clTRID>ABC-12345</clTRID>
+C:  </command>
+C:</epp>
+]]></artwork></figure>
+				</t>
+				<t>
+					Example &lt;host:update&gt; response
+<figure><artwork><![CDATA[
+S:<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+S:<epp xmlns="urn:ietf:params:xml:ns:epp-1.0">
+S:  <response>
+S:    <result code="1000">
+S:      <msg>Command completed successfully</msg>
+S:    </result>
+S:    <extension>
+S:      <regLock:infData xmlns:regLock="urn:ietf:params:xml:ns:epp:registryLock-1.0">
+S:        <regLock:locked>1</locked>
+S:      </regLock:infData>
+S:    </extension>
+S:    <trID>
+S:      <clTRID>ABC-12345</clTRID>
+S:      <svTRID>54321-XYZ</svTRID>
+S:    </trID>
+S:  </response>
+S:</epp>
+]]></artwork></figure>
+				</t>
+
+			</section>
+
+			<section anchor="delete" title="EPP &lt;delete&gt; Command">
+				<t>
+					This extension does not add any elements to the EPP &lt;delete&gt;
+					command or &lt;delete&gt; response described in the EPP
+					mappings <xref target="RFC5731" />, <xref target="RFC5732" /> or
+					<xref target="RFC5733" />.
+				</t>
+				<t>
+					If the object is locked, the EPP &lt;delete&gt; command MUST
+					be rejected with EPP response code 2201 "Authorization error"
+					<xref target="RFC5730" /> section 3.
+					See <xref target="cmdrestrict" />
+				</t>
+			</section>
+
+			<section anchor="renew" title="EPP &lt;renew&gt; Command">
+				<t>
+					This extension does not add any elements to the EPP &lt;renew&gt;
+					command or &lt;renew&gt; response described in the EPP
+					mappings <xref target="RFC5731" />, <xref target="RFC5732" /> or
+					<xref target="RFC5733" />.
+				</t>
+				<t>Execution of the EPP &lt;renew&gt; command is not restricted by this extension.</t>
+			</section>
+
+			<section anchor="transfer" title="EPP &lt;transfer&gt; Command">
+				<t>
+					This extension does not add any elements to the EPP &lt;transfer&gt;
+					command or &lt;transfer&gt; response described in the EPP
+					mappings <xref target="RFC5731" />, <xref target="RFC5732" /> or
+					<xref target="RFC5733" />.
+				</t>
+				<t>
+					If the object is locked, the EPP &lt;transfer&gt; command MUST
+					be rejected with EPP response code 2201 "Authorization error"
+					<xref target="RFC5730" /> section 3.
+					See <xref target="cmdrestrict" />
+				</t>
+			</section>
+
+			<section anchor="update" title="EPP &lt;update&gt; Command">
+				<t>
+					This extension does add an elements to the EPP &lt;update:resData&gt;
+					section of the response as described in <xref target="RFC5730" />.
+				</t>
+				<t>
+					If the object is locked, the EPP &lt;update&gt; the only allowed
+					&lt;update&gt; command is a temporary unlock. All other &lt;update&gt;
+					commands MUST be rejected with EPP response code 2201 "Authorization error"
+					<xref target="RFC5730" /> section 3.
+					See <xref target="cmdrestrict" />
+				</t>
+				<t>
+					If the object is temporarily unlocked only &lt;update&gt; commands are allowed.
+					&lt;delete&gt; and &lt;transfer&gt; are explicitly not allowed. Registries can
+					further narrow down allowed changes, e.g. registries could prohobit changes of
+					registrant for doamins even under temporary unlock.
+				</t>
+				<t>
+					IF the object is temporarily unlocked, the SEVER_UPDATE_PROHIBITED status
+					should be cleared for the time of the temporary unlock.
+				</t>
+				<t>
+					Example &lt;domain:update&gt; command, locking domain
+<figure><artwork><![CDATA[
+C:<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+C:<epp xmlns="urn:ietf:params:xml:ns:epp-1.0">
+C:  <command>
+C:    <update>
+C:      <domain:update
+C:       xmlns:domain="urn:ietf:params:xml:ns:domain-1.0">
+C:        <domain:name>example.com</domain:name>
+C:      </domain:update>
+C:    </update>
+C:    <extension>
+C:      <regLock:lock xmlns:regLock="urn:ietf:params:xml:ns:epp:registryLock-1.0">
+C:        <regLock:unlock>outofband</locked>
+C:      </regLock:lock>
+C:    </extension>
+C:    <clTRID>ABC-12345</clTRID>
+C:  </command>
+C:</epp>
+]]></artwork></figure>
+				</t>
+				<t>
+					Example &lt;domain:update&gt; response
+<figure><artwork><![CDATA[
+S:<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+S:<epp xmlns="urn:ietf:params:xml:ns:epp-1.0">
+S:  <response>
+S:    <result code="1000">
+S:      <msg>Command completed successfully</msg>
+S:    </result>
+S:    <extension>
+S:      <regLock:infData xmlns:regLock="urn:ietf:params:xml:ns:epp:registryLock-1.0">
+S:        <regLock:locked>1</locked>
+S:      </regLock:infData>
+S:    </extension>
+S:    <trID>
+S:      <clTRID>ABC-12345</clTRID>
+S:      <svTRID>54321-XYZ</svTRID>
+S:    </trID>
+S:  </response>
+S:</epp>
+]]></artwork></figure>
+				</t>
+				<t>
+					Example &lt;domain:update&gt; command, for temporary unlock of domain
+<figure><artwork><![CDATA[
+C:<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+C:<epp xmlns="urn:ietf:params:xml:ns:epp-1.0">
+C:  <command>
+C:    <update>
+C:      <domain:update
+C:       xmlns:domain="urn:ietf:params:xml:ns:domain-1.0">
+C:        <domain:name>example.com</domain:name>
+C:        <domain:authInfo>
+C:          <domain:pw>******</domain:pw>
+C:        </domain:authInfo>
+C:      </domain:update>
+C:    </update>
+C:    <extension>
+C:      <regLock:lock xmlns:regLock="urn:ietf:params:xml:ns:epp:registryLock-1.0">
+C:        <regLock:unlockUntil>20000101T000000+0000</regLock:unlockUntil>
+C:      </regLock:lock>
+C:    </extension>
+C:    <clTRID>ABC-12345</clTRID>
+C:  </command>
+C:</epp>
+]]></artwork></figure>
+				</t>
+				<t>
+					Example &lt;domain:update&gt; response, for temporary unlock of domain
+<figure><artwork><![CDATA[
+S:<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+S:<epp xmlns="urn:ietf:params:xml:ns:epp-1.0">
+S:  <response>
+S:    <result code="1000">
+S:      <msg>Command completed successfully</msg>
+S:    </result>
+S:    <resData>
+S:      <regLock:infData xmlns:regLock="urn:ietf:params:xml:ns:epp:registryLock-1.0">
+S:        <regLock:locked>1</locked>
+S:        <regLock:unlockedUntil>20000101T000000+0000</regLock:unlockedUntil>
+S:      </regLock:infData>
+S:    </resData>
+S:    <trID>
+S:      <clTRID>ABC-12345</clTRID>
+S:      <svTRID>54321-XYZ</svTRID>
+S:    </trID>
+S:  </response>
+S:</epp>
+]]></artwork></figure>
+				</t>
+				<t>
+					Example &lt;domain:update&gt; response, for failure of temporary unlock of domain
+<figure><artwork><![CDATA[
+S:<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+S:<epp xmlns="urn:ietf:params:xml:ns:epp-1.0">
+S:  <response>
+S:    <result code="2201">
+S:      <msg>Authorization error</msg>
+S:    </result>
+S:    <resData>
+S:      <regLock:infData xmlns:regLock="urn:ietf:params:xml:ns:epp:registryLock-1.0">
+S:        <regLock:locked>1</locked>
+S:      </regLock:infData>
+S:    </resData>
+S:    <trID>
+S:      <clTRID>ABC-12345</clTRID>
+S:      <svTRID>54321-XYZ</svTRID>
+S:    </trID>
+S:  </response>
+S:</epp>
+]]></artwork></figure>
+				</t>
+			</section>
+		</section>
+	</section>
+
+	<section anchor="syntax" title="Formal Syntax">
+
+		<t>
+			One schema is presented here that is the EPP Registry Lock Extension
+			schema.
+		</t>
+
+		<t>
+			The formal syntax presented here is a complete schema representation
+			of the object mapping suitable for automated validation of EPP XML
+			instances. The BEGIN and END tags are not part of the schema; they
+			are used to note the beginning and ending of the schema for URI
+			registration purposes.
+		</t>
+
+		<section title="Registry Lock Extension Schema">
+<figure><artwork><![CDATA[
+BEGIN
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema targetNamespace="urn:se:iis:xml:epp:registryLock-1.0"
+          xmlns:registryLock="urn:se:iis:xml:epp:registryLock-1.0"
+          xmlns:xs="http://www.w3.org/2001/XMLSchema"
+          elementFormDefault="qualified">
+
+    <xs:annotation>
+      <xs:documentation>
+        Registry Lock Extension to the Extensible Provisioning Protocol v1.0
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:element name="lock" type="registryLock:lockType" />
+
+    <xs:complexType name="lockType">
+      <xs:sequence>
+	    <simpleType name="unlock" minOccurs="0">
+          <restriction base="token">
+            <enumeration value="outofband"/>
+            <enumeration value="password"/>
+          </restriction>
+        </simpleType>
+		<xs:element name="unlockUntil" type="xs:dateTime" minOccurs="0" />
+      </xs:sequence>
+    </xs:complexType>
+
+    <xs:element name="infData" type="registryLock:infDataType"/>
+
+    <xs:complexType name="infDataType">
+      <xs:sequence>
+        <xs:element name="locked" type="xs:boolean" />
+        <xs:element name="unlockedUntil" type="xs:dateTime" minOccurs="0" />
+      </xs:sequence>
+    </xs:complexType>
+
+</xs:schema>
+END
+]]></artwork></figure>
+		</section>
+	</section>
+
+	<section anchor="IANA" title="IANA Considerations">
+
+		<section anchor="IANA-XML-Namespace" title="XML Namespace">
+			<t>
+				This document uses URNs to describe XML namespaces and XML schemas
+				conforming to a registry mechanism described in <xref target="RFC3688"/>.
+				The following URI assignment is requested of IANA:
+			</t>
+
+			<t>Registration request for the registryLock namespace:</t>
+
+			<t>
+				<list>
+					<t>URI: urn:ietf:params:xml:ns:epp:registryLock-1.0</t>
+					<t>Registrant Contact: IESG</t>
+					<t>XML: None. Namespace URIs do not represent an XML specification.</t>
+				</list>
+			</t>
+
+			<t>Registration request for the registryLock XML schema:</t>
+
+			<t>
+				<list>
+					<t>URI: urn:ietf:params:xml:schema:epp:registryLock-1.0</t>
+					<t>Registrant Contact: IESG</t>
+					<t>XML: See the "Formal Syntax" section of this document.</t>
+				</list>
+			</t>
+		</section>
+
+		<section anchor="EPP-Extension-Registry" title="EPP Extension Registry">
+			<t>
+				The EPP extension described in this document should be registered by
+				the IANA in the EPP Extension Registry described in <xref target="RFC7451"/>.  The
+				details of the registration are as follows:
+			</t>
+			<t>
+				Name of Extension: &quot;Registry Lock Extension for the
+				Extensible Provisioning Protocol (EPP)&quot;
+			</t>
+			<t>Document status: Standards Track</t>
+			<t>Reference: (insert reference to RFC version of this document)</t>
+			<t>Registrant Name and Email Address: IESG, &lt;iesg@ietf.org&gt;</t>
+			<t>TLDs: Any</t>
+			<t>IPR Disclosure: None</t>
+			<t>Status: Active</t>
+			<t>Notes: None</t>
+		</section>
+	</section>
+
+	<section anchor="Implementation" title="Implementation Status">
+		<t>
+			Note to RFC Editor: Please remove this section and the reference to
+			<xref target="RFC7942">RFC 7942</xref> before publication.
+		</t>
+		<t>Implemented by .SE since 2019.</t>
+	</section>
+
+	<section anchor="Security" title="Security Considerations">
+		<t>
+			The security properties of EPP from <xref target="RFC5730"/> are
+			preserved.
+		</t>
+		<t>
+			This extensions introduces an additional security layer for changes of
+			objects managed through EPP. The overall security of these measures
+			depends on policies and procedures not covered in this document.
+		</t>
+	</section>
+
+	<section anchor="Acknowledgements" title="Acknowledgements">
+		<t>The authors wish to thank the following persons for their feedback and suggestions:</t>
+	</section>
+
+</middle>
+
+  <!--  *****BACK MATTER ***** -->
+
+<back>
+    <!-- References split into informative and normative -->
+
+    <!-- There are 2 ways to insert reference entries from the citation libraries:
+     1. define an ENTITY at the top, and use "ampersand character"RFC2629; here (as shown)
+     2. simply use a PI "less than character"?rfc include="reference.RFC.2119.xml"?> here
+        (for I-Ds: include="reference.I-D.narten-iana-considerations-rfc2434bis.xml")
+
+     Both are cited textually in the same manner: by using xref elements.
+     If you use the PI option, xml2rfc will, by default, try to find included files in the same
+     directory as the including file. You can also define the XML_LIBRARY environment variable
+     with a value containing a set of directories to search.  These can be either in the local
+     filing system or remote ones accessed by http (http://domain/dir/... ).-->
+
+	<references title="Normative References">
+		&RFC2119;
+		&RFC3688;
+		&RFC7451;
+		&RFC7942;
+		&RFC5730;
+		&RFC5731;
+		&RFC5732;
+		&RFC5733;
+		&W3C.REC-xmlschema-2-20041028;
+	</references>
+
+
+	<section title="Change History">
+
+		<section title="Change from 00 to 01" anchor="change-00-to-01">
+			<t>
+				<list style="numbers">
+					<t>Corrected information for the &lt;create/&gt; command.</t>
+					<t>Minor fixes in wording.</t>
+					<t>Introduces resData element.</t>
+				</list>
+			</t>
+		</section>
+		<section title="Change from 01 to 02" anchor="change-01-to-02">
+			<t>
+				<list style="numbers">
+					<t>Multiple spelling errors fixed.</t>
+					<t>Moved response from resData to extension part of the EPP response.</t>
+					<t>Clarification of password and out-of-band usage.</t>
+				</list>
+			</t>
+		</section>
+
+	</section>
+
+</back>
+
+</rfc>
