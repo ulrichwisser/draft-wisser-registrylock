@@ -43,11 +43,6 @@
 <!-- inline cref output -->
 <!-- end of list of popular I-D processing instructions -->
 <rfc category="std" docName="draft-wisser-registrylock-latest" ipr="trust200902">
-  <!-- category values: std, bcp, info, exp, and historic
-     ipr values: full3667, noModification3667, noDerivatives3667
-     you can add the attributes updates="NNNN" and obsoletes="NNNN"
-     they will automatically be output with "(if approved)" -->
-
   <!-- ***** FRONT MATTER ***** -->
 
 <front>
@@ -70,7 +65,7 @@
 		</address>
 	</author>
 
-	<date day="24" month="March" year="2020"/>
+	<date day="1" month="April" year="2020"/>
 
 	<area>Applications and Real-Time Area</area>
 
@@ -133,8 +128,8 @@
 			<t>
 				The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
 				"SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
-				document are to be interpreted as described in <xref
-				target="RFC2119">RFC 2119</xref>.
+				document are to be interpreted as described in
+				<xref target="RFC2119">RFC 2119</xref>.
 			</t>
 			<t>
 				XML is case sensitive. Unless stated otherwise, XML specifications
@@ -171,6 +166,15 @@
 			authorizations. Where in-band authorizations would provide
 			authorization through EPP. Whereas out-of-band solutions provide
 			authorization by some other means.
+			<list>
+				<t>
+					either by temporarily unlocking the object for changes
+				</t>
+				<t>
+					or by authorizing pending changes after they have been
+					submitted to the server.
+				</t>
+			</list>
 		</t>
 
 		<section anchor="password" title="Password Authorization">
@@ -180,17 +184,16 @@
 				<xref target="RFC5732" /> and <xref target="RFC5733" />.
 			</t>
 			<t>
-				Registries implementing in-band authorization should consider to
-				require more secure passwords as specified in draft-ietf-regext-login-security.
+				registryLock aims to break automatic changes to registry objects. A registry implementing
+				password authorization must make sure to secure authorization
+				in a way that breaks automation and requires human interaction.
+				One such scheme, although currently none is defined for EPP, could be
+				one time passwords.
 			</t>
 			<t>
-				With password authorization temporary unlock is not strictly needed.
+				With password authorization temporary unlock MUST not be implemented.
 				Every &lt;update&gt; command could be authorized by including the credentials
 				in the command.
-			</t>
-			<t>
-				When allowing password authorizations registries MUST allow both temporary unlock
-				and including authorization in the command.
 			</t>
 		</section>
 
@@ -202,12 +205,18 @@
 			</t>
 			<t>
 				Registries must provide means for the registrar or registrant
-				to temporarily unlock the domain or to remove registry lock
-				through some means other than EPP.
+				to temporarily unlock the domain, to remove registry lock or
+				ro authorize changes submitted to the server through some means
+				than EPP.
 			</t>
 			<t>
-				Any domain that is locked with out-of-band authorization MUST
+				Any object that is locked with out-of-band authorization MUST
 				reject password authorization with EPP response code 2201
+				"Authorization error" <xref target="RFC5730" /> section 3.
+			</t>
+			<t>
+				Any object that is locked with password authorization MUST
+				reject out-of-band authorization with EPP response code 2201
 				"Authorization error" <xref target="RFC5730" /> section 3.
 			</t>
 		</section>
@@ -419,12 +428,35 @@ S:</epp>
 
 			<section anchor="create" title="EPP &lt;create&gt; Command">
 				<t>
-					This extension does add an &lt;resData&gt; element to the EPP &lt;create&gt;
+					This extension is intended to be used within the scope of the object
+					creation. It does not define a &lt;create&gt; command of its own.
+				</t>
+				<t>
+					This extension adds elements to both the EPP &lt;create&gt; command and
 					response as described in the EPP <xref target="RFC5730" />.
 				</t>
 				<t>
-					This extension is inteded to be used within the scope of the object creation.
-					It does not define a &lt;create/&gt; command of it's own.
+					When submitting a &lt;create&gt; command to the server, the client MAY
+					include in the &lt;extension&gt; element a &lt;registryLock:create&gt; element
+					to create the domain in a locked state. The extension includes the
+					following child element:
+					<list>
+						<t>
+							A &lt;regLock:unlock&gt; element defining the mechanism of how
+							the domain can be unlocked. Valid values are "outofband" in order
+							to unlock the domain outside of EPP or "password" to unlock the
+							domain using a password.
+						</t>
+					</list>
+				</t>
+				<t>
+					When the &lt;create&gt; command has been processed successfully, and the
+					client requested the creation of a locked domain, the server MUST
+					include in the &lt;extension&gt; section of the EPP response a
+					&lt;regLock:creData&gt; element that contains the following child element:
+					<list>
+						<t>A &lt;regLock:locked&gt; element stating the locked state as being set.</t>
+					</list>
 				</t>
 				<t>
 					Example &lt;host:create&gt; command
@@ -518,25 +550,54 @@ S:</epp>
 
 			<section anchor="update" title="EPP &lt;update&gt; Command">
 				<t>
-					This extension does add an elements to the EPP &lt;update:resData&gt;
-					section of the response as described in <xref target="RFC5730" />.
+					This extension adds elements to both the EPP &lt;update&gt; command and
+					response as described in <xref target="RFC5730" />.
 				</t>
 				<t>
-					If the object is locked, the EPP &lt;update&gt; the only allowed
-					&lt;update&gt; command is a temporary unlock. All other &lt;update&gt;
-					commands MUST be rejected with EPP response code 2201 "Authorization error"
-					<xref target="RFC5730" /> section 3.
-					See <xref target="cmdrestrict" />
+					If the object is not locked, the &lt;update&gt; command can be used to
+					lock the domain, similarly to the &lt;create&gt; command.
+				</t>
+				<t>
+					If the object is locked the server can handle &lt;update&gt; commands in
+					two ways
+					<list>
+						<t>
+							rejecting the command with EPP response code 1001
+							"Command completed successfully; action pending"
+							<xref target="RFC5730" /> section 3
+						</t>
+						<t>
+							answering with EPP response code 2201 "Authorization error"
+							<xref target="RFC5730" /> section 3
+						</t>
+					</list>
 				</t>
 				<t>
 					If the object is temporarily unlocked only &lt;update&gt; commands are allowed.
-					&lt;delete&gt; and &lt;transfer&gt; are explicitly not allowed. Registries can
-					further narrow down allowed changes, e.g. registries could prohobit changes of
-					registrant for doamins even under temporary unlock.
+					&lt;delete&gt; and &lt;transfer&gt; are explicitly not allowed.
+					For the time of the temporary unlock the serverUpdateProhibited status
+					should be cleared.
 				</t>
 				<t>
-					IF the object is temporarily unlocked, the SEVER_UPDATE_PROHIBITED status
-					should be cleared for the time of the temporary unlock.
+					Registries can narrow down allowed changes when a domain is locked.
+					Registries could prohobit changes of registrant for doamins even if
+					the domain is temporatily unlocked or password authorization is given.
+				</t>
+				<t>
+					When the &lt;update&gt;> command has been processed successfully, and the
+					client included the regLock extension in the update request, the
+					server MUST include in the &lt;extension&gt; section of the EPP response
+					a &lt;regLock:updData&gt; element that contains the following child elements:
+					<list>
+						<t>
+							A &lt;regLock:locked&gt; element stating the locked state as being set.
+						</t>
+						<t>
+							An optional &lt;regLock:unlockedUntil&gt; element if the domain has been
+							temporarily unlocked, stating the time stamp when the lock will
+							become active again.
+						</t>
+					</list>
 				</t>
 				<t>
 					Example &lt;domain:update&gt; command, locking domain
@@ -551,7 +612,7 @@ C:        <domain:name>example.com</domain:name>
 C:      </domain:update>
 C:    </update>
 C:    <extension>
-C:      <regLock:lock xmlns:regLock="urn:ietf:params:xml:ns:epp:registryLock-1.0">
+C:      <regLock:update xmlns:regLock="urn:ietf:params:xml:ns:epp:registryLock-1.0">
 C:        <regLock:unlock>outofband</locked>
 C:      </regLock:lock>
 C:    </extension>
@@ -570,9 +631,9 @@ S:    <result code="1000">
 S:      <msg>Command completed successfully</msg>
 S:    </result>
 S:    <extension>
-S:      <regLock:infData xmlns:regLock="urn:ietf:params:xml:ns:epp:registryLock-1.0">
+S:      <regLock:updData xmlns:regLock="urn:ietf:params:xml:ns:epp:registryLock-1.0">
 S:        <regLock:locked>1</locked>
-S:      </regLock:infData>
+S:      </regLock:updData>
 S:    </extension>
 S:    <trID>
 S:      <clTRID>ABC-12345</clTRID>
@@ -592,15 +653,12 @@ C:    <update>
 C:      <domain:update
 C:       xmlns:domain="urn:ietf:params:xml:ns:domain-1.0">
 C:        <domain:name>example.com</domain:name>
-C:        <domain:authInfo>
-C:          <domain:pw>******</domain:pw>
-C:        </domain:authInfo>
 C:      </domain:update>
 C:    </update>
 C:    <extension>
-C:      <regLock:lock xmlns:regLock="urn:ietf:params:xml:ns:epp:registryLock-1.0">
+C:      <regLock:updData xmlns:regLock="urn:ietf:params:xml:ns:epp:registryLock-1.0">
 C:        <regLock:unlockUntil>20000101T000000+0000</regLock:unlockUntil>
-C:      </regLock:lock>
+C:      </regLock:updData>
 C:    </extension>
 C:    <clTRID>ABC-12345</clTRID>
 C:  </command>
@@ -616,12 +674,12 @@ S:  <response>
 S:    <result code="1000">
 S:      <msg>Command completed successfully</msg>
 S:    </result>
-S:    <resData>
-S:      <regLock:infData xmlns:regLock="urn:ietf:params:xml:ns:epp:registryLock-1.0">
+S:    <extension>
+S:      <regLock:updData xmlns:regLock="urn:ietf:params:xml:ns:epp:registryLock-1.0">
 S:        <regLock:locked>1</locked>
 S:        <regLock:unlockedUntil>20000101T000000+0000</regLock:unlockedUntil>
-S:      </regLock:infData>
-S:    </resData>
+S:      </regLock:updData>
+S:    </extension>
 S:    <trID>
 S:      <clTRID>ABC-12345</clTRID>
 S:      <svTRID>54321-XYZ</svTRID>
@@ -639,11 +697,11 @@ S:  <response>
 S:    <result code="2201">
 S:      <msg>Authorization error</msg>
 S:    </result>
-S:    <resData>
-S:      <regLock:infData xmlns:regLock="urn:ietf:params:xml:ns:epp:registryLock-1.0">
+S:    <extension>
+S:      <regLock:updData xmlns:regLock="urn:ietf:params:xml:ns:epp:registryLock-1.0">
 S:        <regLock:locked>1</locked>
-S:      </regLock:infData>
-S:    </resData>
+S:      </regLock:updData>
+S:    </extension>
 S:    <trID>
 S:      <clTRID>ABC-12345</clTRID>
 S:      <svTRID>54321-XYZ</svTRID>
@@ -675,39 +733,67 @@ S:</epp>
 <figure><artwork><![CDATA[
 BEGIN
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema targetNamespace="urn:se:iis:xml:epp:registryLock-1.0"
-          xmlns:registryLock="urn:se:iis:xml:epp:registryLock-1.0"
-          xmlns:xs="http://www.w3.org/2001/XMLSchema"
-          elementFormDefault="qualified">
+<xs:schema targetNamespace="urn:ietf:params:xml:ns:epp:registryLock-1.00"
+  xmlns:regLock="urn:ietf:params:xml:ns:epp:registryLock-1.0"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  elementFormDefault="qualified">
 
-    <xs:annotation>
-      <xs:documentation>
-        Registry Lock Extension to the Extensible Provisioning Protocol v1.0
-      </xs:documentation>
-    </xs:annotation>
+  <xs:annotation>
+    <xs:documentation>
+      Registry Lock Extension to the Extensible Provisioning Protocol v1.0
+    </xs:documentation>
+  </xs:annotation>
 
-    <xs:element name="lock" type="registryLock:lockType" />
 
-    <xs:complexType name="lockType">
-      <xs:sequence>
-	    <simpleType name="unlock" minOccurs="0">
-          <restriction base="token">
-            <enumeration value="outofband"/>
-            <enumeration value="password"/>
-          </restriction>
-        </simpleType>
-		<xs:element name="unlockUntil" type="xs:dateTime" minOccurs="0" />
-      </xs:sequence>
-    </xs:complexType>
+  <!-- child elements found in EPP commands -->
 
-    <xs:element name="infData" type="registryLock:infDataType"/>
+  <xs:element name="create" type="regLock:createType"/>
+  <xs:element name="update" type="regLock:updateType"/>
 
-    <xs:complexType name="infDataType">
-      <xs:sequence>
-        <xs:element name="locked" type="xs:boolean" />
-        <xs:element name="unlockedUntil" type="xs:dateTime" minOccurs="0" />
-      </xs:sequence>
-    </xs:complexType>
+
+  <!-- child elements found in EPP responses -->
+
+  <xs:element name="infData" type="regLock:respDataType"/>
+  <xs:element name="creData" type="regLock:respDataType"/>
+  <xs:element name="updData" type="regLock:respDataType"/>
+
+
+  <!-- child element of the <create> command -->
+
+  <xs:complexType name="createType">
+    <xs:sequence>
+      <xs:element name="unlock" type="regLock:unlockType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+
+  <!-- child element of the <update> command -->
+
+  <xs:complexType name="updateType">
+    <xs:choice>
+      <xs:element name="unlock" type="regLock:unlockType"/>
+      <xs:element name="unlockUntil" type="xs:dateTime"/>
+    </xs:choice>
+  </xs:complexType>
+
+
+  <!-- child element of the response -->
+
+  <xs:complexType name="respDataType">
+    <xs:sequence>
+      <xs:element name="locked" type="xs:boolean"/>
+    </xs:sequence>
+  </xs:complexType>
+
+
+  <!-- common types -->
+
+  <xs:simpleType name="unlockType">
+    <xs:restriction base="xs:token">
+      <xs:enumeration value="outofband"/>
+      <xs:enumeration value="password"/>
+    </xs:restriction>
+  </xs:simpleType>
 
 </xs:schema>
 END
@@ -783,6 +869,13 @@ END
 			objects managed through EPP. The overall security of these measures
 			depends on policies and procedures not covered in this document.
 		</t>
+		<t>
+			Registry should whenevr possible NOT implement password authorization.
+			Once the password is known to the EPP client and number of changes
+			could be authorized with it. Therefore a registry implementing password
+			authorization MUST take precautions so that every update needs human
+			interaction.
+		</t>
 	</section>
 
 	<section anchor="Acknowledgements" title="Acknowledgements">
@@ -837,6 +930,8 @@ END
 					<t>Multiple spelling errors fixed.</t>
 					<t>Moved response from resData to extension part of the EPP response.</t>
 					<t>Clarification of password and out-of-band usage.</t>
+					<t>Updated XML schema and examples</t>
+					<t>Changed security considerations for password authorization.</t>
 				</list>
 			</t>
 		</section>
