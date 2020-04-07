@@ -4,6 +4,7 @@ This is the working area for the individual Internet-Draft, "Registry Lock Exten
 
 * [Editor's Copy](https://ulrichwisser.github.io/draft-wisser-registrylock/#go.draft-wisser-registrylock.html)
 * [Individual Draft](https://tools.ietf.org/html/draft-wisser-registrylock)
+* [Datatracker](https://datatracker.ietf.org/doc/draft-wisser-registrylock)
 * [Compare Editor's Copy to Individual Draft](https://ulrichwisser.github.io/draft-wisser-registrylock/#go.draft-wisser-registrylock.diff)
 
 ## Building the Draft
