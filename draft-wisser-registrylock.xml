@@ -447,6 +447,11 @@ S:</epp>
 							to unlock the domain outside of EPP or "password" to unlock the
 							domain using a password.
 						</t>
+						<t>
+							An optional &lt;regLock:unlockedUntil&gt; element that keeps
+							the domain temporarily unlocked, stating the time stamp when the
+							lock should become active.
+						</t>
 					</list>
 				</t>
 				<t>
@@ -456,6 +461,11 @@ S:</epp>
 					&lt;regLock:creData&gt; element that contains the following child element:
 					<list>
 						<t>A &lt;regLock:locked&gt; element stating the locked state as being set.</t>
+						<t>
+							An optional &lt;regLock:unlockedUntil&gt; element if the domain has been
+							temporarily unlocked, stating the time stamp when the lock will
+							become active.
+						</t>
 					</list>
 				</t>
 				<t>
@@ -555,7 +565,11 @@ S:</epp>
 				</t>
 				<t>
 					If the object is not locked, the &lt;update&gt; command can be used to
-					lock the domain, similarly to the &lt;create&gt; command.
+					lock the object, similarly to the &lt;create&gt; command.
+				</t>
+				<t>
+					If the object is locked, the server MUST NOT except any command to
+					fully unlock the object. Only temporarily unlocking is acceptable.
 				</t>
 				<t>
 					If the object is locked the server can handle &lt;update&gt; commands in
@@ -763,6 +777,7 @@ BEGIN
   <xs:complexType name="createType">
     <xs:sequence>
       <xs:element name="unlock" type="regLock:unlockType"/>
+      <xs:element name="unlockUntil" type="xs:dateTime"/>
     </xs:sequence>
   </xs:complexType>
 
@@ -932,6 +947,8 @@ END
 					<t>Clarification of password and out-of-band usage.</t>
 					<t>Updated XML schema and examples</t>
 					<t>Changed security considerations for password authorization.</t>
+					<t>Added unlockUntil to create command</t>
+					<t>Forbid temporarily unlock for password authorization.</t>
 				</list>
 			</t>
 		</section>
