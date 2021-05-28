@@ -51,7 +51,7 @@
 	</title>
 
 	<author fullname="Ulrich Wisser" initials="U" surname="Wisser">
-		<organization>The Swedish Internet Infrastructure Foundation</organization>
+		<organization>The Swedish Internet Foundation</organization>
 
 		<address>
 			<postal>
@@ -65,7 +65,7 @@
 		</address>
 	</author>
 
-	<date day="7" month="April" year="2020"/>
+	<date day="27" month="May" year="2021"/>
 
 	<area>Applications and Real-Time Area</area>
 
@@ -166,7 +166,7 @@
 			authorizations. Where in-band authorizations would provide
 			authorization through EPP. Whereas out-of-band solutions provide
 			authorization by some other means.
-			<list>
+			<list style="symbols">
 				<t>
 					either by temporarily unlocking the object for changes
 				</t>
@@ -225,7 +225,7 @@
 			<t>
 				Once an object has Registry Lock enabled all transform commands
 				except &lt;renew&gt; MUST only be executed if
-				<list>
+				<list style="symbols">
 					<t>proper authorization is provided or</t>
 					<t>the object is temporarily unlocked</t>
 				</list>
@@ -235,7 +235,7 @@
 			<t>
 				The following EPP flags <xref target="RFC5731" />,
 				<xref target="RFC5732" />, <xref target="RFC5733" /> must be set.
-				<list>
+				<list style="symbols">
 					<t>serverDeleteProhibited</t>
 					<t>serverTransferProhibited</t>
 					<t>serverUpdateProhibited</t>
@@ -252,7 +252,7 @@
 			</t>
 			<t>
 				OPEN QUESTION: If a domain is under registry lock, can a subordinate host be updated?
-				<list>
+				<list style="symbols">
 					<t>I got one "no" answer - hosts might not be owned by domain owner</t>
 					<t>In .se/.nu all subordinary hosts are automatically owned by the domain owner and locked if the domain is locked.</t>
 				</list>
@@ -314,7 +314,7 @@
 				</t>
 				<t>
 					The &lt;regLock:infData&gt; element contains the following child elements:
-					<list>
+					<list style="symbols">
 						<t>
 							Exactly one &lt;locked&gt; element that indicates if
 							Registry Lock is enabled for the object.
@@ -440,7 +440,7 @@ S:</epp>
 					include in the &lt;extension&gt; element a &lt;registryLock:create&gt; element
 					to create the domain in a locked state. The extension includes the
 					following child element:
-					<list>
+					<list style="symbols">
 						<t>
 							A &lt;regLock:unlock&gt; element defining the mechanism of how
 							the domain can be unlocked. Valid values are "outofband" in order
@@ -459,7 +459,7 @@ S:</epp>
 					client requested the creation of a locked domain, the server MUST
 					include in the &lt;extension&gt; section of the EPP response a
 					&lt;regLock:creData&gt; element that contains the following child element:
-					<list>
+					<list style="symbols">
 						<t>A &lt;regLock:locked&gt; element stating the locked state as being set.</t>
 						<t>
 							An optional &lt;regLock:unlockedUntil&gt; element if the domain has been
@@ -574,7 +574,7 @@ S:</epp>
 				<t>
 					If the object is locked the server can handle &lt;update&gt; commands in
 					two ways
-					<list>
+					<list style="symbols">
 						<t>
 							rejecting the command with EPP response code 1001
 							"Command completed successfully; action pending"
@@ -602,7 +602,7 @@ S:</epp>
 					client included the regLock extension in the update request, the
 					server MUST include in the &lt;extension&gt; section of the EPP response
 					a &lt;regLock:updData&gt; element that contains the following child elements:
-					<list>
+					<list style="symbols">
 						<t>
 							A &lt;regLock:locked&gt; element stating the locked state as being set.
 						</t>
@@ -952,7 +952,13 @@ END
 				</list>
 			</t>
 		</section>
-
+		<section title="Change from 02 to 03" anchor="change-02-to-03">
+			<t>
+				<list style="numbers">
+					<t>Fix list styles for better readability</t>
+				</list>
+			</t>
+		</section>
 	</section>
 
 </back>
