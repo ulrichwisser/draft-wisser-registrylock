@@ -21,4 +21,4 @@ This requires that you have the necessary software installed.  See
 ## Contributing
 
 See the
-[guidelines for contributions](https://github.com/ulrichwisser/draft-wisser-registrylock/blob//CONTRIBUTING.md).
+[guidelines for contributions](https://github.com/ulrichwisser/draft-wisser-registrylock/blob/master/CONTRIBUTING.md).
