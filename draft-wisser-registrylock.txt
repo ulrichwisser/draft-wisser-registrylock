@@ -4,8 +4,8 @@
 
 Registration Protocols Extensions                              U. Wisser
 Internet-Draft                           The Swedish Internet Foundation
-Intended status: Standards Track                             27 May 2021
-Expires: 28 November 2021
+Intended status: Standards Track                            18 June 2021
+Expires: 20 December 2021
 
 
  Registry Lock Extension for the Extensible Provisioning Protocol (EPP)
@@ -14,8 +14,8 @@ Expires: 28 November 2021
 Abstract
 
    This extensions defines an additional protective layer for changes to
-   domain [RFC5731], host [RFC5732] and contact [RFC5733] objects
-   managed through EPP.
+   domain [RFC5731], host xref target="RFC5732" format="default"/> and
+   contact [RFC5733] objects managed through EPP.
 
    EPP allows changes to objects only by the sponsoring client.  EPP
    objects are usually managed by the sponsoring client on behalf of the
@@ -28,6 +28,8 @@ Abstract
    This extension defines a protective layer that aims to break
    automated changes and work flows by requiring manual intervention by
    the sponsoring client or it's customers.
+
+   xxx
 
 Status of This Memo
 
@@ -44,7 +46,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 28 November 2021.
+   This Internet-Draft will expire on 20 December 2021.
 
 Copyright Notice
 
@@ -226,8 +228,8 @@ Table of Contents
    Registry Lock is enabled for an object.
 
    Boolean values MUST be represented in the XML Schema format described
-   in Part 2 of the W3C XML Schema recommendation [W3C.REC-xmlschema-
-   2-20010502].
+   in Part 2 of the W3C XML Schema recommendation
+   [W3C.REC-xmlschema-2-20041028].
 
 4.  EPP Command Mapping
 
@@ -268,82 +270,87 @@ Table of Contents
 
    Example <domain:info> Response, domain not locked
 
-S:<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-S:<epp xmlns="urn:ietf:params:xml:ns:epp-1.0"
-S:     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-S:  <response>
-S:    <result code="1000">
-S:      <msg>Command completed successfully</msg>
-S:    </result>
-S:    <resData>
-S:      <domain:infData
-...
-S:      </domain:infData>
-S:    </resData>
-S:    <extension>
-S:      <regLock:infData xmlns:regLock="urn:ietf:params:xml:ns:epp:registryLock-1.0">
-S:        <regLock:locked>0</regLock:locked>
-S:      </regLock:infData>
-S:    </extension>
-S:    <trID>
-S:      <clTRID>ABC-12345</clTRID>
-S:      <svTRID>54322-XYZ</svTRID>
-S:    </trID>
-S:  </response>
-S:</epp>
+                  S:<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+                  S:<epp xmlns="urn:ietf:params:xml:ns:epp-1.0"
+                  S:     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                  S:  <response>
+                  S:    <result code="1000">
+                  S:      <msg>Command completed successfully</msg>
+                  S:    </result>
+                  S:    <resData>
+                  S:      <domain:infData
+                  ...
+                  S:      </domain:infData>
+                  S:    </resData>
+                  S:    <extension>
+                  S:      <regLock:infData
+                  S:        xmlns:regLock="urn:ietf:params:xml:ns:epp:registryLock-1.0">
+                  S:        <regLock:locked>0</regLock:locked>
+                  S:      </regLock:infData>
+                  S:    </extension>
+                  S:    <trID>
+                  S:      <clTRID>ABC-12345</clTRID>
+                  S:      <svTRID>54322-XYZ</svTRID>
+                  S:    </trID>
+                  S:  </response>
+                  S:</epp>
+
 
    Example <domain:info> Response, domain locked
 
-S:<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-S:<epp xmlns="urn:ietf:params:xml:ns:epp-1.0"
-S:     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-S:  <response>
-S:    <result code="1000">
-S:      <msg>Command completed successfully</msg>
-S:    </result>
-S:    <resData>
-S:      <domain:infData
-...
-S:      </domain:infData>
-S:    </resData>
-S:    <extension>
-S:      <regLock:infData xmlns:regLock="urn:ietf:params:xml:ns:epp:registryLock-1.0">
-S:        <regLock:locked>1</regLock:locked>
-S:      </regLock:infData>
-S:    </extension>
-S:    <trID>
-S:      <clTRID>ABC-12345</clTRID>
-S:      <svTRID>54322-XYZ</svTRID>
-S:    </trID>
-S:  </response>
-S:</epp>
+                  S:<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+                  S:<epp xmlns="urn:ietf:params:xml:ns:epp-1.0"
+                  S:     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                  S:  <response>
+                  S:    <result code="1000">
+                  S:      <msg>Command completed successfully</msg>
+                  S:    </result>
+                  S:    <resData>
+                  S:      <domain:infData
+                  ...
+                  S:      </domain:infData>
+                  S:    </resData>
+                  S:    <extension>
+                  S:      <regLock:infData
+                  S:        xmlns:regLock="urn:ietf:params:xml:ns:epp:registryLock-1.0">
+                  S:        <regLock:locked>1</regLock:locked>
+                  S:      </regLock:infData>
+                  S:    </extension>
+                  S:    <trID>
+                  S:      <clTRID>ABC-12345</clTRID>
+                  S:      <svTRID>54322-XYZ</svTRID>
+                  S:    </trID>
+                  S:  </response>
+                  S:</epp>
+
 
    Example <domain:info> Response, domain temporary unlocked
 
-S:<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-S:<epp xmlns="urn:ietf:params:xml:ns:epp-1.0"
-S:     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-S:  <response>
-S:    <result code="1000">
-S:      <msg>Command completed successfully</msg>
-S:    </result>
-S:    <resData>
-S:      <domain:infData
-...
-S:      </domain:infData>
-S:    </resData>
-S:    <extension>
-S:      <regLock:infData xmlns:regLock="urn:ietf:params:xml:ns:epp:registryLock-1.0">
-S:        <regLock:locked>1</regLock:locked>
-S:        <regLock:unlockedUntil>20000101T000000+0000</regLock:unlockedUntil>
-S:      </regLock:infData>
-S:    </extension>
-S:    <trID>
-S:      <clTRID>ABC-12345</clTRID>
-S:      <svTRID>54322-XYZ</svTRID>
-S:    </trID>
-S:  </response>
-S:</epp>
+                  S:<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+                  S:<epp xmlns="urn:ietf:params:xml:ns:epp-1.0"
+                  S:     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                  S:  <response>
+                  S:    <result code="1000">
+                  S:      <msg>Command completed successfully</msg>
+                  S:    </result>
+                  S:    <resData>
+                  S:      <domain:infData
+                  ...
+                  S:      </domain:infData>
+                  S:    </resData>
+                  S:    <extension>
+                  S:      <regLock:infData xmlns:regLock="urn:ietf:params:xml:ns:epp:registryLock-1.0">
+                  S:        <regLock:locked>1</regLock:locked>
+                  S:        <regLock:unlockedUntil>20000101T000000+0000</regLock:unlockedUntil>
+                  S:      </regLock:infData>
+                  S:    </extension>
+                  S:    <trID>
+                  S:      <clTRID>ABC-12345</clTRID>
+                  S:      <svTRID>54322-XYZ</svTRID>
+                  S:    </trID>
+                  S:  </response>
+                  S:</epp>
+
 
 4.1.3.  EPP <transfer> Command
 
@@ -386,46 +393,46 @@ S:</epp>
 
    Example <host:create> command
 
-C:<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-C:<epp xmlns="urn:ietf:params:xml:ns:epp-1.0">
-C:  <command>
-C:    <create>
-C:      <host:create
-C:       xmlns:host="urn:ietf:params:xml:ns:host-1.0">
-C:        <host:name>ns1.example.com</host:name>
-C:        <host:addr ip="v4">192.0.2.2</host:addr>
-C:        <host:addr ip="v4">192.0.2.29</host:addr>
-C:        <host:addr ip="v6">1080:0:0:0:8:800:200C:417A</host:addr>
-C:      </host:create>
-C:    </create>
-C:    <extension>
-C:      <regLock:lock xmlns:regLock="urn:ietf:params:xml:ns:epp:registryLock-1.0">
-C:        <regLock:unlock>outofband</locked>
-C:      </regLock:lock>
-C:    </extension>
-C:    <clTRID>ABC-12345</clTRID>
-C:  </command>
-C:</epp>
+                        C:<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+                        C:<epp xmlns="urn:ietf:params:xml:ns:epp-1.0">
+                        C:  <command>
+                        C:    <create>
+                        C:      <host:create
+                        C:       xmlns:host="urn:ietf:params:xml:ns:host-1.0">
+                        C:        <host:name>ns1.example.com</host:name>
+                        C:        <host:addr ip="v4">192.0.2.2</host:addr>
+                        C:        <host:addr ip="v4">192.0.2.29</host:addr>
+                        C:        <host:addr ip="v6">1080:0:0:0:8:800:200C:417A</host:addr>
+                        C:      </host:create>
+                        C:    </create>
+                        C:    <extension>
+                        C:      <regLock:lock xmlns:regLock="urn:ietf:params:xml:ns:epp:registryLock-1.0">
+                        C:        <regLock:unlock>outofband</locked>
+                        C:      </regLock:lock>
+                        C:    </extension>
+                        C:    <clTRID>ABC-12345</clTRID>
+                        C:  </command>
+                        C:</epp>
 
    Example <host:update> response
 
-S:<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-S:<epp xmlns="urn:ietf:params:xml:ns:epp-1.0">
-S:  <response>
-S:    <result code="1000">
-S:      <msg>Command completed successfully</msg>
-S:    </result>
-S:    <extension>
-S:      <regLock:infData xmlns:regLock="urn:ietf:params:xml:ns:epp:registryLock-1.0">
-S:        <regLock:locked>1</locked>
-S:      </regLock:infData>
-S:    </extension>
-S:    <trID>
-S:      <clTRID>ABC-12345</clTRID>
-S:      <svTRID>54321-XYZ</svTRID>
-S:    </trID>
-S:  </response>
-S:</epp>
+                          S:<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+                          S:<epp xmlns="urn:ietf:params:xml:ns:epp-1.0">
+                          S:  <response>
+                          S:    <result code="1000">
+                          S:      <msg>Command completed successfully</msg>
+                          S:    </result>
+                          S:    <extension>
+                          S:      <regLock:infData xmlns:regLock="urn:ietf:params:xml:ns:epp:registryLock-1.0">
+                          S:        <regLock:locked>1</locked>
+                          S:      </regLock:infData>
+                          S:    </extension>
+                          S:    <trID>
+                          S:      <clTRID>ABC-12345</clTRID>
+                          S:      <svTRID>54321-XYZ</svTRID>
+                          S:    </trID>
+                          S:  </response>
+                          S:</epp>
 
 4.2.2.  EPP <delete> Command
 
@@ -497,105 +504,105 @@ S:</epp>
 
    Example <domain:update> command, locking domain
 
-C:<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-C:<epp xmlns="urn:ietf:params:xml:ns:epp-1.0">
-C:  <command>
-C:    <update>
-C:      <domain:update
-C:       xmlns:domain="urn:ietf:params:xml:ns:domain-1.0">
-C:        <domain:name>example.com</domain:name>
-C:      </domain:update>
-C:    </update>
-C:    <extension>
-C:      <regLock:update xmlns:regLock="urn:ietf:params:xml:ns:epp:registryLock-1.0">
-C:        <regLock:unlock>outofband</locked>
-C:      </regLock:lock>
-C:    </extension>
-C:    <clTRID>ABC-12345</clTRID>
-C:  </command>
-C:</epp>
+                            C:<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+                            C:<epp xmlns="urn:ietf:params:xml:ns:epp-1.0">
+                            C:  <command>
+                            C:    <update>
+                            C:      <domain:update
+                            C:       xmlns:domain="urn:ietf:params:xml:ns:domain-1.0">
+                            C:        <domain:name>example.com</domain:name>
+                            C:      </domain:update>
+                            C:    </update>
+                            C:    <extension>
+                            C:      <regLock:update xmlns:regLock="urn:ietf:params:xml:ns:epp:registryLock-1.0">
+                            C:        <regLock:unlock>outofband</locked>
+                            C:      </regLock:lock>
+                            C:    </extension>
+                            C:    <clTRID>ABC-12345</clTRID>
+                            C:  </command>
+                            C:</epp>
 
    Example <domain:update> response
 
-S:<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-S:<epp xmlns="urn:ietf:params:xml:ns:epp-1.0">
-S:  <response>
-S:    <result code="1000">
-S:      <msg>Command completed successfully</msg>
-S:    </result>
-S:    <extension>
-S:      <regLock:updData xmlns:regLock="urn:ietf:params:xml:ns:epp:registryLock-1.0">
-S:        <regLock:locked>1</locked>
-S:      </regLock:updData>
-S:    </extension>
-S:    <trID>
-S:      <clTRID>ABC-12345</clTRID>
-S:      <svTRID>54321-XYZ</svTRID>
-S:    </trID>
-S:  </response>
-S:</epp>
+                              S:<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+                              S:<epp xmlns="urn:ietf:params:xml:ns:epp-1.0">
+                              S:  <response>
+                              S:    <result code="1000">
+                              S:      <msg>Command completed successfully</msg>
+                              S:    </result>
+                              S:    <extension>
+                              S:      <regLock:updData xmlns:regLock="urn:ietf:params:xml:ns:epp:registryLock-1.0">
+                              S:        <regLock:locked>1</locked>
+                              S:      </regLock:updData>
+                              S:    </extension>
+                              S:    <trID>
+                              S:      <clTRID>ABC-12345</clTRID>
+                              S:      <svTRID>54321-XYZ</svTRID>
+                              S:    </trID>
+                              S:  </response>
+                              S:</epp>
 
    Example <domain:update> command, for temporary unlock of domain
 
-C:<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-C:<epp xmlns="urn:ietf:params:xml:ns:epp-1.0">
-C:  <command>
-C:    <update>
-C:      <domain:update
-C:       xmlns:domain="urn:ietf:params:xml:ns:domain-1.0">
-C:        <domain:name>example.com</domain:name>
-C:      </domain:update>
-C:    </update>
-C:    <extension>
-C:      <regLock:updData xmlns:regLock="urn:ietf:params:xml:ns:epp:registryLock-1.0">
-C:        <regLock:unlockUntil>20000101T000000+0000</regLock:unlockUntil>
-C:      </regLock:updData>
-C:    </extension>
-C:    <clTRID>ABC-12345</clTRID>
-C:  </command>
-C:</epp>
+                                C:<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+                                C:<epp xmlns="urn:ietf:params:xml:ns:epp-1.0">
+                                C:  <command>
+                                C:    <update>
+                                C:      <domain:update
+                                C:       xmlns:domain="urn:ietf:params:xml:ns:domain-1.0">
+                                C:        <domain:name>example.com</domain:name>
+                                C:      </domain:update>
+                                C:    </update>
+                                C:    <extension>
+                                C:      <regLock:updData xmlns:regLock="urn:ietf:params:xml:ns:epp:registryLock-1.0">
+                                C:        <regLock:unlockUntil>20000101T000000+0000</regLock:unlockUntil>
+                                C:      </regLock:updData>
+                                C:    </extension>
+                                C:    <clTRID>ABC-12345</clTRID>
+                                C:  </command>
+                                C:</epp>
 
    Example <domain:update> response, for temporary unlock of domain
 
-S:<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-S:<epp xmlns="urn:ietf:params:xml:ns:epp-1.0">
-S:  <response>
-S:    <result code="1000">
-S:      <msg>Command completed successfully</msg>
-S:    </result>
-S:    <extension>
-S:      <regLock:updData xmlns:regLock="urn:ietf:params:xml:ns:epp:registryLock-1.0">
-S:        <regLock:locked>1</locked>
-S:        <regLock:unlockedUntil>20000101T000000+0000</regLock:unlockedUntil>
-S:      </regLock:updData>
-S:    </extension>
-S:    <trID>
-S:      <clTRID>ABC-12345</clTRID>
-S:      <svTRID>54321-XYZ</svTRID>
-S:    </trID>
-S:  </response>
-S:</epp>
+                                  S:<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+                                  S:<epp xmlns="urn:ietf:params:xml:ns:epp-1.0">
+                                  S:  <response>
+                                  S:    <result code="1000">
+                                  S:      <msg>Command completed successfully</msg>
+                                  S:    </result>
+                                  S:    <extension>
+                                  S:      <regLock:updData xmlns:regLock="urn:ietf:params:xml:ns:epp:registryLock-1.0">
+                                  S:        <regLock:locked>1</locked>
+                                  S:        <regLock:unlockedUntil>20000101T000000+0000</regLock:unlockedUntil>
+                                  S:      </regLock:updData>
+                                  S:    </extension>
+                                  S:    <trID>
+                                  S:      <clTRID>ABC-12345</clTRID>
+                                  S:      <svTRID>54321-XYZ</svTRID>
+                                  S:    </trID>
+                                  S:  </response>
+                                  S:</epp>
 
    Example <domain:update> response, for failure of temporary unlock of
    domain
 
-S:<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-S:<epp xmlns="urn:ietf:params:xml:ns:epp-1.0">
-S:  <response>
-S:    <result code="2201">
-S:      <msg>Authorization error</msg>
-S:    </result>
-S:    <extension>
-S:      <regLock:updData xmlns:regLock="urn:ietf:params:xml:ns:epp:registryLock-1.0">
-S:        <regLock:locked>1</locked>
-S:      </regLock:updData>
-S:    </extension>
-S:    <trID>
-S:      <clTRID>ABC-12345</clTRID>
-S:      <svTRID>54321-XYZ</svTRID>
-S:    </trID>
-S:  </response>
-S:</epp>
+                                    S:<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+                                    S:<epp xmlns="urn:ietf:params:xml:ns:epp-1.0">
+                                    S:  <response>
+                                    S:    <result code="2201">
+                                    S:      <msg>Authorization error</msg>
+                                    S:    </result>
+                                    S:    <extension>
+                                    S:      <regLock:updData xmlns:regLock="urn:ietf:params:xml:ns:epp:registryLock-1.0">
+                                    S:        <regLock:locked>1</locked>
+                                    S:      </regLock:updData>
+                                    S:    </extension>
+                                    S:    <trID>
+                                    S:      <clTRID>ABC-12345</clTRID>
+                                    S:      <svTRID>54321-XYZ</svTRID>
+                                    S:    </trID>
+                                    S:  </response>
+                                    S:</epp>
 
 5.  Formal Syntax
 
@@ -610,73 +617,73 @@ S:</epp>
 
 5.1.  Registry Lock Extension Schema
 
-BEGIN
-<?xml version="1.0" encoding="UTF-8"?>
-<xs:schema targetNamespace="urn:ietf:params:xml:ns:epp:registryLock-1.00"
-  xmlns:regLock="urn:ietf:params:xml:ns:epp:registryLock-1.0"
-  xmlns:xs="http://www.w3.org/2001/XMLSchema"
-  elementFormDefault="qualified">
+                                    BEGIN
+                                    <?xml version="1.0" encoding="UTF-8"?>
+                                    <xs:schema targetNamespace="urn:ietf:params:xml:ns:epp:registryLock-1.00"
+                                      xmlns:regLock="urn:ietf:params:xml:ns:epp:registryLock-1.0"
+                                      xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                                      elementFormDefault="qualified">
 
-  <xs:annotation>
-    <xs:documentation>
-      Registry Lock Extension to the Extensible Provisioning Protocol v1.0
-    </xs:documentation>
-  </xs:annotation>
-
-
-  <!-- child elements found in EPP commands -->
-
-  <xs:element name="create" type="regLock:createType"/>
-  <xs:element name="update" type="regLock:updateType"/>
+                                      <xs:annotation>
+                                        <xs:documentation>
+                                          Registry Lock Extension to the Extensible Provisioning Protocol v1.0
+                                        </xs:documentation>
+                                      </xs:annotation>
 
 
-  <!-- child elements found in EPP responses -->
+                                      <!-- child elements found in EPP commands -->
 
-  <xs:element name="infData" type="regLock:respDataType"/>
-  <xs:element name="creData" type="regLock:respDataType"/>
-  <xs:element name="updData" type="regLock:respDataType"/>
-
-
-  <!-- child element of the <create> command -->
-
-  <xs:complexType name="createType">
-    <xs:sequence>
-      <xs:element name="unlock" type="regLock:unlockType"/>
-      <xs:element name="unlockUntil" type="xs:dateTime"/>
-    </xs:sequence>
-  </xs:complexType>
+                                      <xs:element name="create" type="regLock:createType"/>
+                                      <xs:element name="update" type="regLock:updateType"/>
 
 
-  <!-- child element of the <update> command -->
+                                      <!-- child elements found in EPP responses -->
 
-  <xs:complexType name="updateType">
-    <xs:choice>
-      <xs:element name="unlock" type="regLock:unlockType"/>
-      <xs:element name="unlockUntil" type="xs:dateTime"/>
-    </xs:choice>
-  </xs:complexType>
+                                      <xs:element name="infData" type="regLock:respDataType"/>
+                                      <xs:element name="creData" type="regLock:respDataType"/>
+                                      <xs:element name="updData" type="regLock:respDataType"/>
 
 
-  <!-- child element of the response -->
+                                      <!-- child element of the <create> command -->
 
-  <xs:complexType name="respDataType">
-    <xs:sequence>
-      <xs:element name="locked" type="xs:boolean"/>
-    </xs:sequence>
-  </xs:complexType>
+                                      <xs:complexType name="createType">
+                                        <xs:sequence>
+                                          <xs:element name="unlock" type="regLock:unlockType"/>
+                                          <xs:element name="unlockUntil" type="xs:dateTime"/>
+                                        </xs:sequence>
+                                      </xs:complexType>
 
 
-  <!-- common types -->
+                                      <!-- child element of the <update> command -->
 
-  <xs:simpleType name="unlockType">
-    <xs:restriction base="xs:token">
-      <xs:enumeration value="outofband"/>
-      <xs:enumeration value="password"/>
-    </xs:restriction>
-  </xs:simpleType>
+                                      <xs:complexType name="updateType">
+                                        <xs:choice>
+                                          <xs:element name="unlock" type="regLock:unlockType"/>
+                                          <xs:element name="unlockUntil" type="xs:dateTime"/>
+                                        </xs:choice>
+                                      </xs:complexType>
 
-</xs:schema>
-END
+
+                                      <!-- child element of the response -->
+
+                                      <xs:complexType name="respDataType">
+                                        <xs:sequence>
+                                          <xs:element name="locked" type="xs:boolean"/>
+                                        </xs:sequence>
+                                      </xs:complexType>
+
+
+                                      <!-- common types -->
+
+                                      <xs:simpleType name="unlockType">
+                                        <xs:restriction base="xs:token">
+                                          <xs:enumeration value="outofband"/>
+                                          <xs:enumeration value="password"/>
+                                        </xs:restriction>
+                                      </xs:simpleType>
+
+                                    </xs:schema>
+                                    END
 
 6.  IANA Considerations
 
@@ -813,6 +820,7 @@ A.2.  Change from 01 to 02
 A.3.  Change from 02 to 03
 
    1.  Fix list styles for better readability
+   2.  Fix reference to W3C XML Schema
 
 Author's Address
 
