@@ -411,8 +411,7 @@ S:</epp>
 ]]>
 </artwork>
 <t>
-Example &lt;domain:info&gt; Response,
-domain locked
+Example &lt;domain:info&gt; Response, domain locked
 </t>
 <artwork name="" type="" align="left" alt=""><![CDATA[
 S:<?xml version="1.0" encoding="UTF-8" standalone="no"?>
@@ -461,7 +460,7 @@ S:    <extension>
 S:      <regLock:infData
 S:        xmlns:regLock="urn:ietf:params:xml:ns:epp:registryLock-1.0">
 S:        <regLock:locked>1</regLock:locked>
-S:        <regLock:unlockedUntil>20000101T000000+0000</regLock:unlockedUntil>
+S:<regLock:unlockedUntil>20000101T000000+0000</regLock:unlockedUntil>
 S:      </regLock:infData>
 S:    </extension>
 S:    <trID>
@@ -571,27 +570,27 @@ response as described in the EPP
   Example &lt;host:create&gt; command
 </t>
 <artwork name="" type="" align="left" alt=""><![CDATA[
-  C:<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-  C:<epp xmlns="urn:ietf:params:xml:ns:epp-1.0">
-  C:  <command>
-  C:    <create>
-  C:      <host:create
-  C:       xmlns:host="urn:ietf:params:xml:ns:host-1.0">
-  C:        <host:name>ns1.example.com</host:name>
-  C:        <host:addr ip="v4">192.0.2.2</host:addr>
-  C:        <host:addr ip="v4">192.0.2.29</host:addr>
-  C:        <host:addr ip="v6">1080:0:0:0:8:800:200C:417A</host:addr>
-  C:      </host:create>
-  C:    </create>
-  C:    <extension>
-  C:      <regLock:lock
-  C:        xmlns:regLock="urn:ietf:params:xml:ns:epp:registryLock-1.0">
-  C:        <regLock:unlock>outofband</locked>
-  C:      </regLock:lock>
-  C:    </extension>
-  C:    <clTRID>ABC-12345</clTRID>
-  C:  </command>
-  C:</epp>
+C:<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+C:<epp xmlns="urn:ietf:params:xml:ns:epp-1.0">
+C:  <command>
+C:    <create>
+C:      <host:create
+C:       xmlns:host="urn:ietf:params:xml:ns:host-1.0">
+C:        <host:name>ns1.example.com</host:name>
+C:        <host:addr ip="v4">192.0.2.2</host:addr>
+C:        <host:addr ip="v4">192.0.2.29</host:addr>
+C:        <host:addr ip="v6">1080:0:0:0:8:800:200C:417A</host:addr>
+C:      </host:create>
+C:    </create>
+C:    <extension>
+C:      <regLock:lock
+C:        xmlns:regLock="urn:ietf:params:xml:ns:epp:registryLock-1.0">
+C:        <regLock:unlock>outofband</locked>
+C:      </regLock:lock>
+C:    </extension>
+C:    <clTRID>ABC-12345</clTRID>
+C:  </command>
+C:</epp>
   ]]></artwork>
   </section>
   <section anchor="delete" numbered="true" toc="default">
@@ -682,26 +681,26 @@ response as described in the EPP
     <t>
       Example &lt;domain:update&gt; command, locking domain
     </t>
-    <artwork name="" type="" align="left" alt=""><![CDATA[
-      C:<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-      C:<epp xmlns="urn:ietf:params:xml:ns:epp-1.0">
-      C:  <command>
-      C:    <update>
-      C:      <domain:update
-      C:       xmlns:domain="urn:ietf:params:xml:ns:domain-1.0">
-      C:        <domain:name>example.com</domain:name>
-      C:      </domain:update>
-      C:    </update>
-      C:    <extension>
-      C:      <regLock:update
-      C:        xmlns:regLock="urn:ietf:params:xml:ns:epp:registryLock-1.0">
-      C:        <regLock:unlock>outofband</locked>
-      C:      </regLock:lock>
-      C:    </extension>
-      C:    <clTRID>ABC-12345</clTRID>
-      C:  </command>
-      C:</epp>
-      ]]></artwork>
+<artwork name="" type="" align="left" alt=""><![CDATA[
+C:<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+C:<epp xmlns="urn:ietf:params:xml:ns:epp-1.0">
+C:  <command>
+C:    <update>
+C:      <domain:update
+C:       xmlns:domain="urn:ietf:params:xml:ns:domain-1.0">
+C:        <domain:name>example.com</domain:name>
+C:      </domain:update>
+C:    </update>
+C:    <extension>
+C:      <regLock:update
+C:        xmlns:regLock="urn:ietf:params:xml:ns:epp:registryLock-1.0">
+C:        <regLock:unlock>outofband</locked>
+C:      </regLock:lock>
+C:    </extension>
+C:    <clTRID>ABC-12345</clTRID>
+C:  </command>
+C:</epp>
+]]></artwork>
             </section>
           </section>
         </section>
