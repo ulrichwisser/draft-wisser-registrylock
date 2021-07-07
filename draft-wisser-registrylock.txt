@@ -4,8 +4,8 @@
 
 Registration Protocols Extensions                              U. Wisser
 Internet-Draft                           The Swedish Internet Foundation
-Intended status: Standards Track                            22 June 2021
-Expires: 24 December 2021
+Intended status: Standards Track                             7 July 2021
+Expires: 8 January 2022
 
 
  Registry Lock Extension for the Extensible Provisioning Protocol (EPP)
@@ -29,8 +29,8 @@ Abstract
    automated changes and work flows by requiring manual intervention.
 
    The actual form of manual intervention is out-of-scope for this
-   document.  Who and how changes can be made is up to the registry and
-   registrars to decide.
+   document.  By whom and how changes can be made is up to the registry
+   and registrars to decide.
 
 Status of This Memo
 
@@ -47,7 +47,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 24 December 2021.
+   This Internet-Draft will expire on 8 January 2022.
 
 Copyright Notice
 
@@ -71,6 +71,7 @@ Table of Contents
      2.1.  Out-of-band Authorization
      2.2.  In-band Authorization
      2.3.  Command Execution Restrictions
+     2.4.  Temporary Unlock
    3.  Object Attributes
      3.1.  Locking Status
    4.  EPP Command Mapping
@@ -97,7 +98,7 @@ Table of Contents
      A.1.  Change from 00 to 01
      A.2.  Change from 01 to 02
      A.3.  Change from 02 to 03
-     A.4.  Change from 02 to 03
+     A.4.  Change from 03 to 04
    Author's Address
 
 1.  Introduction
@@ -118,8 +119,8 @@ Table of Contents
    automated changes and work flows by requiring manual intervention.
 
    The actual form of manual intervention is out-of-scope for this
-   document.  Who and how changes can be made is up to the registry and
-   registrars to decide.
+   document.  By whom and how changes can be made is up to the registry
+   and registrars to decide.
 
 1.1.  Conventions Used in This Document
 
@@ -157,8 +158,6 @@ Table of Contents
    *  either by temporarily unlocking the object for changes
    *  or by authorizing pending changes after they have been submitted
       to the server
-   *  or by authorizing a limited number of (future) EPP transform
-      commands.
 
 2.1.  Out-of-band Authorization
 
@@ -170,14 +169,6 @@ Table of Contents
    temporarily unlock the domain, to remove registry lock or ro
    authorize changes submitted to the server through some means than
    EPP.
-
-   Any object that is locked with out-of-band authorization MUST reject
-   password authorization with EPP response code 2201 "Authorization
-   error" [RFC5730] section 3.
-
-   Any object that is locked with password authorization MUST reject
-   out-of-band authorization with EPP response code 2201 "Authorization
-   error" [RFC5730] section 3.
 
 2.2.  In-band Authorization
 
@@ -194,8 +185,8 @@ Table of Contents
 2.3.  Command Execution Restrictions
 
    Once an object has Registry Lock enabled all transform commands
-   except <renew> MUST only be executed if a proper out-of-band
-   authorization has been made.
+   except <renew> MUST only be executed if a proper authorization has
+   been made.
 
    Otherwise the command MUST be rejected with EPP result code 2201
    "Authorization error" or 1001 "Command completed successfully; action
@@ -214,10 +205,6 @@ Table of Contents
 
    If the object is unlocked the flags SHOULD be cleared and the server
    should answer to an <info> request with the according information.
-   However, if the object is only temporarily unlocked, only the
-   serverUpdateProhibited flag SHOULD be cleared, but in an <info>
-   response the server should still indicate that the object is under
-   registry lock.
 
    OPEN QUESTION: If a domain is under registry lock, can a subordinate
    host be updated?
@@ -229,9 +216,40 @@ Table of Contents
    We need more input!
 
    If the object is temporarily unlocked only <update> commands are
-   allowed. <delete> and <transfer> are explicitly not allowed.  For the
-   time of the temporary unlock the serverUpdateProhibited status should
-   be cleared.
+   allowed.  <delete> and <transfer> are explicitly not allowed.  For
+   the time of the temporary unlock the serverUpdateProhibited status
+   should be cleared.
+
+2.4.  Temporary Unlock
+
+   While an object is locked some situations could require a change.  To
+   fully unlock the object would remove all protection and could not
+   provide any guarantee that the object is protected again after the
+   desired changes have been made.
+
+   Temporarily unlocking the object allows for a more fine grained
+   security model for all objects.
+
+   Any temporary unlocking of the object has to be time limited.  After
+   that time has passed no further changes are possible.
+
+   Additionally the number of allowed EPP commands can be specified to
+   further limit the changes possible.
+
+   Registries and registrars can further limit the possibles changes,
+   e.g. not allowing owner changes even for temporarily unlocked Domain
+   objects.
+
+   IS THE LAST PARAGRAPH A GOOD IDEA?  INPUT NEEDED!!!
+
+   When an object is temporarily unlocked the serverUpdateProhibited
+   SHOULD be cleared while changes are possible.
+
+   When either the time for the temporary unlock has passed or the
+   maximum amount of EPP changes has been made the object MUST return to
+   a fully locked status.  The serverUpdateProhibited flag MUST be set
+   again and the infData response MUST no longer contain a
+   <unlockedUntil> element.
 
 3.  Object Attributes
 
@@ -280,9 +298,8 @@ Table of Contents
    *  An OPTIONAL <unlockedUntil> element if the object currently can be
       changed by the sponsoring client.  The field indicates the time
       stamp when the lock will become active again.
-   *  An OPTIONAL <unlockedForCmd> element if the object currently can
-      be changed by the sponsoring client. the field indicates the
-      number of EPP Transform commands that will be executed.
+   *  An OPTIONAL <eppCmdCount> attribute that indicates the number of
+      EPP <update> commands that will be executed.
 
    Example <domain:info> Response, domain not locked
 
@@ -356,36 +373,8 @@ Table of Contents
   S:      <regLock:infData
   S:        xmlns:regLock="urn:ietf:params:xml:ns:epp:registryLock-1.0">
   S:        <regLock:locked>1</regLock:locked>
-  S:<regLock:unlockedUntil>20000101T000000+0000</regLock:unlockedUntil>
-  S:      </regLock:infData>
-  S:    </extension>
-  S:    <trID>
-  S:      <clTRID>ABC-12345</clTRID>
-  S:      <svTRID>54322-XYZ</svTRID>
-  S:    </trID>
-  S:  </response>
-  S:</epp>
-
-   Example <domain:info> Response, domain unlocked for a number of EPP
-   Transform commands
-
-  S:<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-  S:<epp xmlns="urn:ietf:params:xml:ns:epp-1.0"
-  S:     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  S:  <response>
-  S:    <result code="1000">
-  S:      <msg>Command completed successfully</msg>
-  S:    </result>
-  S:    <resData>
-  S:      <domain:infData
-  ...
-  S:      </domain:infData>
-  S:    </resData>
-  S:    <extension>
-  S:      <regLock:infData
-  S:        xmlns:regLock="urn:ietf:params:xml:ns:epp:registryLock-1.0">
-  S:        <regLock:locked>1</regLock:locked>
-  S:        <regLock:unlockedForCmd>3</regLock:unlockedForCmd>
+  S:<regLock:unlockedUntil eppCmdCount="1">20000101T000000+0000
+  S:</regLock:unlockedUntil>
   S:      </regLock:infData>
   S:    </extension>
   S:    <trID>
@@ -408,17 +397,16 @@ Table of Contents
    This extension is intended to be used within the scope of the object
    creation.  It does not define a <create> command of its own.
 
-   This extension adds elements to both the EPP <create> command and
-   response as described in the EPP [RFC5730].
+   This extension adds elements to the EPP <create> command as described
+   in the EPP [RFC5730].
 
    When submitting a <create> command to the server, the client MAY
-   include in the <extension> element a <registryLock:create> element to
+   include in the <extension> element a <registryLock:lock> element to
    create the domain in a locked state.  The extension includes the
-   following child element:
+   following element:
 
-   *  A <regLock:unlock> element defining the mechanism of how the
-      domain can be unlocked.  The only valid value is "outofband" in
-      order to unlock the domain outside of EPP.
+   *  A <regLock:lock> element indicating that the domain MUST be
+      created in a locked state.
 
    When a <create> command has been processed successfully, the EPP
    response is as described in the EPP objects mappings [RFC5731],
@@ -426,27 +414,25 @@ Table of Contents
 
    Example <host:create> command
 
-  C:<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-  C:<epp xmlns="urn:ietf:params:xml:ns:epp-1.0">
-  C:  <command>
-  C:    <create>
-  C:      <host:create
-  C:       xmlns:host="urn:ietf:params:xml:ns:host-1.0">
-  C:        <host:name>ns1.example.com</host:name>
-  C:        <host:addr ip="v4">192.0.2.2</host:addr>
-  C:        <host:addr ip="v4">192.0.2.29</host:addr>
-  C:        <host:addr ip="v6">1080:0:0:0:8:800:200C:417A</host:addr>
-  C:      </host:create>
-  C:    </create>
-  C:    <extension>
-  C:      <regLock:lock
-  C:        xmlns:regLock="urn:ietf:params:xml:ns:epp:registryLock-1.0">
-  C:        <regLock:unlock>outofband</locked>
-  C:      </regLock:lock>
-  C:    </extension>
-  C:    <clTRID>ABC-12345</clTRID>
-  C:  </command>
-  C:</epp>
+C:<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+C:<epp xmlns="urn:ietf:params:xml:ns:epp-1.0">
+C:  <command>
+C:    <create>
+C:      <host:create
+C:       xmlns:host="urn:ietf:params:xml:ns:host-1.0">
+C:        <host:name>ns1.example.com</host:name>
+C:        <host:addr ip="v4">192.0.2.2</host:addr>
+C:        <host:addr ip="v4">192.0.2.29</host:addr>
+C:        <host:addr ip="v6">1080:0:0:0:8:800:200C:417A</host:addr>
+C:      </host:create>
+C:    </create>
+C:    <extension>
+C:      <regLock:lock
+C:        xmlns:regLock="urn:ietf:params:xml:ns:epp:registryLock-1.0" />
+C:    </extension>
+C:    <clTRID>ABC-12345</clTRID>
+C:  </command>
+C:</epp>
 
 4.2.2.  EPP <delete> Command
 
@@ -501,30 +487,28 @@ Table of Contents
    the domain is temporatily unlocked or password authorization is
    given.
 
-   When a <create> command has been processed successfully, the EPP
+   When a <update> command has been processed successfully, the EPP
    response is as described in the EPP objects mappings [RFC5731],
    [RFC5732], [RFC5733].
 
    Example <domain:update> command, locking domain
 
-  C:<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-  C:<epp xmlns="urn:ietf:params:xml:ns:epp-1.0">
-  C:  <command>
-  C:    <update>
-  C:      <domain:update
-  C:       xmlns:domain="urn:ietf:params:xml:ns:domain-1.0">
-  C:        <domain:name>example.com</domain:name>
-  C:      </domain:update>
-  C:    </update>
-  C:    <extension>
-  C:      <regLock:update
-  C:        xmlns:regLock="urn:ietf:params:xml:ns:epp:registryLock-1.0">
-  C:        <regLock:unlock>outofband</locked>
-  C:      </regLock:lock>
-  C:    </extension>
-  C:    <clTRID>ABC-12345</clTRID>
-  C:  </command>
-  C:</epp>
+C:<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+C:<epp xmlns="urn:ietf:params:xml:ns:epp-1.0">
+C:  <command>
+C:    <update>
+C:      <domain:update
+C:       xmlns:domain="urn:ietf:params:xml:ns:domain-1.0">
+C:        <domain:name>example.com</domain:name>
+C:      </domain:update>
+C:    </update>
+C:    <extension>
+C:      <regLock:lock
+C:        xmlns:regLock="urn:ietf:params:xml:ns:epp:registryLock-1.0" />
+C:    </extension>
+C:    <clTRID>ABC-12345</clTRID>
+C:  </command>
+C:</epp>
 
 5.  Formal Syntax
 
@@ -539,72 +523,45 @@ Table of Contents
 
 5.1.  Registry Lock Extension Schema
 
-  BEGIN
-  <?xml version="1.0" encoding="UTF-8"?>
-  <xs:schema
-    targetNamespace="urn:ietf:params:xml:ns:epp:registryLock-1.00"
-    xmlns:regLock="urn:ietf:params:xml:ns:epp:registryLock-1.0"
-    xmlns:xs="http://www.w3.org/2001/XMLSchema"
-    elementFormDefault="qualified">
+BEGIN
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema
+  targetNamespace="urn:ietf:params:xml:ns:epp:registryLock-1.00"
+  xmlns:regLock="urn:ietf:params:xml:ns:epp:registryLock-1.0"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  elementFormDefault="qualified">
 
-    <xs:annotation>
-      <xs:documentation>
-        Registry Lock Extension to the
-        Extensible Provisioning Protocol v1.0
-      </xs:documentation>
-    </xs:annotation>
-
-
-    <!-- child elements found in EPP commands -->
-
-    <xs:element name="create" type="regLock:createType"/>
-    <xs:element name="update" type="regLock:updateType"/>
+  <xs:annotation>
+    <xs:documentation>
+      Registry Lock Extension to the
+      Extensible Provisioning Protocol v1.0
+    </xs:documentation>
+  </xs:annotation>
 
 
-    <!-- child elements found in EPP responses -->
+  <!-- child elements found in EPP commands -->
 
-    <xs:element name="infData" type="regLock:respDataType"/>
+  <xs:element name="lock" />
 
+  <!-- child elements found in EPP responses -->
 
-    <!-- child element of the <create> command -->
+  <xs:element name="infData" type="regLock:infDataType"/>
 
-    <xs:complexType name="createType">
-      <xs:sequence>
-        <xs:element name="unlock" type="regLock:unlockType"/>
-      </xs:sequence>
-    </xs:complexType>
+  <!-- child element of the response -->
 
+  <xs:complexType name="infDataType">
+    <xs:sequence>
+      <xs:element name="locked" type="xs:boolean"/>
+      <xs:element name="unlockedUntil" type="xs:dateTime" minOccurs="0">
+        <xs:complexType>
+          <xs:attribute name="eppCmdCount" type="xs:positiveInteger" minOccurs="0" />
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
 
-    <!-- child element of the <update> command -->
-
-    <xs:complexType name="updateType">
-      <xs:choice>
-        <xs:element name="unlock" type="regLock:unlockType"/>
-      </xs:choice>
-    </xs:complexType>
-
-
-    <!-- child element of the response -->
-
-    <xs:complexType name="respDataType">
-      <xs:sequence>
-        <xs:element name="locked" type="xs:boolean"/>
-        <xs:element name="unlockedUntil" type="xs:dateTime"/>
-        <xs:element name="unlockedForCmd" type="xs:nonNegativeInteger"/>
-      </xs:sequence>
-    </xs:complexType>
-
-
-    <!-- common types -->
-
-    <xs:simpleType name="unlockType">
-      <xs:restriction base="xs:token">
-        <xs:enumeration value="outofband"/>
-      </xs:restriction>
-    </xs:simpleType>
-
-  </xs:schema>
-  END
+</xs:schema>
+END
 
 6.  IANA Considerations
 
@@ -662,14 +619,13 @@ Table of Contents
 
    This extensions introduces an additional security layer for changes
    of objects managed through EPP.  The overall security of these
-   measures depends on policies and procedures not covered in this
-   document.
+   measures depends on the security of the out-of-band authorization.
+   Registries and registrars are therefore adviced to select secure
+   forms of authorization.
 
-   Registry should whenevr possible NOT implement password
-   authorization.  Once the password is known to the EPP client and
-   number of changes could be authorized with it.  Therefore a registry
-   implementing password authorization MUST take precautions so that
-   every update needs human interaction.
+   Current EPP authorizations schemes are not secure enough to allow in-
+   band authorization.  Registries and registrars therefore MUST not
+   implent in-band command authorization.
 
 9.  Acknowledgements
 
@@ -743,10 +699,12 @@ A.3.  Change from 02 to 03
    1.  Fix list styles for better readability
    2.  Fix reference to W3C XML Schema
 
-A.4.  Change from 02 to 03
+A.4.  Change from 03 to 04
 
    1.  Remove references to in-band authorization
    2.  Remove special response elements
+   3.  Add command counter to temporary unlock
+   4.  Fix formatting and XML schema
 
 Author's Address
 
