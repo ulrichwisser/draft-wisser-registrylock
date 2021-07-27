@@ -4,8 +4,8 @@
 
 Registration Protocols Extensions                              U. Wisser
 Internet-Draft                           The Swedish Internet Foundation
-Intended status: Standards Track                             7 July 2021
-Expires: 8 January 2022
+Intended status: Standards Track                            27 July 2021
+Expires: 28 January 2022
 
 
  Registry Lock Extension for the Extensible Provisioning Protocol (EPP)
@@ -47,7 +47,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 8 January 2022.
+   This Internet-Draft will expire on 28 January 2022.
 
 Copyright Notice
 
@@ -99,6 +99,7 @@ Table of Contents
      A.2.  Change from 01 to 02
      A.3.  Change from 02 to 03
      A.4.  Change from 03 to 04
+     A.5.  Change from 04 to 05
    Author's Address
 
 1.  Introduction
@@ -310,9 +311,27 @@ Table of Contents
   S:    <result code="1000">
   S:      <msg>Command completed successfully</msg>
   S:    </result>
-  S:    <resData>
   S:      <domain:infData
-  ...
+  S:       xmlns:domain="urn:ietf:params:xml:ns:domain-1.0">
+  S:        <domain:name>example.com</domain:name>
+  S:        <domain:roid>EXAMPLE1-REP</domain:roid>
+  S:        <domain:status s="ok"/>
+  S:        <domain:registrant>jd1234</domain:registrant>
+  S:        <domain:contact type="admin">sh8013</domain:contact>
+  S:        <domain:contact type="tech">sh8013</domain:contact>
+  S:        <domain:ns>
+  S:          <domain:hostObj>ns1.example.com</domain:hostObj>
+  S:          <domain:hostObj>ns1.example.net</domain:hostObj>
+  S:        </domain:ns>
+  S:        <domain:host>ns1.example.com</domain:host>
+  S:        <domain:host>ns2.example.com</domain:host>
+  S:        <domain:clID>ClientX</domain:clID>
+  S:        <domain:crID>ClientY</domain:crID>
+  S:        <domain:crDate>1999-04-03T22:00:00.0Z</domain:crDate>
+  S:        <domain:upID>ClientX</domain:upID>
+  S:        <domain:upDate>1999-12-03T09:00:00.0Z</domain:upDate>
+  S:        <domain:exDate>2005-04-03T22:00:00.0Z</domain:exDate>
+  S:        <domain:trDate>2000-04-08T09:00:00.0Z</domain:trDate>
   S:      </domain:infData>
   S:    </resData>
   S:    <extension>
@@ -337,9 +356,27 @@ Table of Contents
   S:    <result code="1000">
   S:      <msg>Command completed successfully</msg>
   S:    </result>
-  S:    <resData>
   S:      <domain:infData
-  ...
+  S:       xmlns:domain="urn:ietf:params:xml:ns:domain-1.0">
+  S:        <domain:name>example.com</domain:name>
+  S:        <domain:roid>EXAMPLE1-REP</domain:roid>
+  S:        <domain:status s="ok"/>
+  S:        <domain:registrant>jd1234</domain:registrant>
+  S:        <domain:contact type="admin">sh8013</domain:contact>
+  S:        <domain:contact type="tech">sh8013</domain:contact>
+  S:        <domain:ns>
+  S:          <domain:hostObj>ns1.example.com</domain:hostObj>
+  S:          <domain:hostObj>ns1.example.net</domain:hostObj>
+  S:        </domain:ns>
+  S:        <domain:host>ns1.example.com</domain:host>
+  S:        <domain:host>ns2.example.com</domain:host>
+  S:        <domain:clID>ClientX</domain:clID>
+  S:        <domain:crID>ClientY</domain:crID>
+  S:        <domain:crDate>1999-04-03T22:00:00.0Z</domain:crDate>
+  S:        <domain:upID>ClientX</domain:upID>
+  S:        <domain:upDate>1999-12-03T09:00:00.0Z</domain:upDate>
+  S:        <domain:exDate>2005-04-03T22:00:00.0Z</domain:exDate>
+  S:        <domain:trDate>2000-04-08T09:00:00.0Z</domain:trDate>
   S:      </domain:infData>
   S:    </resData>
   S:    <extension>
@@ -364,17 +401,35 @@ Table of Contents
   S:    <result code="1000">
   S:      <msg>Command completed successfully</msg>
   S:    </result>
-  S:    <resData>
   S:      <domain:infData
-  ...
+  S:       xmlns:domain="urn:ietf:params:xml:ns:domain-1.0">
+  S:        <domain:name>example.com</domain:name>
+  S:        <domain:roid>EXAMPLE1-REP</domain:roid>
+  S:        <domain:status s="ok"/>
+  S:        <domain:registrant>jd1234</domain:registrant>
+  S:        <domain:contact type="admin">sh8013</domain:contact>
+  S:        <domain:contact type="tech">sh8013</domain:contact>
+  S:        <domain:ns>
+  S:          <domain:hostObj>ns1.example.com</domain:hostObj>
+  S:          <domain:hostObj>ns1.example.net</domain:hostObj>
+  S:        </domain:ns>
+  S:        <domain:host>ns1.example.com</domain:host>
+  S:        <domain:host>ns2.example.com</domain:host>
+  S:        <domain:clID>ClientX</domain:clID>
+  S:        <domain:crID>ClientY</domain:crID>
+  S:        <domain:crDate>1999-04-03T22:00:00.0Z</domain:crDate>
+  S:        <domain:upID>ClientX</domain:upID>
+  S:        <domain:upDate>1999-12-03T09:00:00.0Z</domain:upDate>
+  S:        <domain:exDate>2005-04-03T22:00:00.0Z</domain:exDate>
+  S:        <domain:trDate>2000-04-08T09:00:00.0Z</domain:trDate>
   S:      </domain:infData>
   S:    </resData>
   S:    <extension>
   S:      <regLock:infData
   S:        xmlns:regLock="urn:ietf:params:xml:ns:epp:registryLock-1.0">
   S:        <regLock:locked>1</regLock:locked>
-  S:<regLock:unlockedUntil eppCmdCount="1">20000101T000000+0000
-  S:</regLock:unlockedUntil>
+  S:        <regLock:unlockedUntil eppCmdCount="1">20000101T000000+0000
+  S:        </regLock:unlockedUntil>
   S:      </regLock:infData>
   S:    </extension>
   S:    <trID>
@@ -554,7 +609,11 @@ BEGIN
       <xs:element name="locked" type="xs:boolean"/>
       <xs:element name="unlockedUntil" type="xs:dateTime" minOccurs="0">
         <xs:complexType>
-          <xs:attribute name="eppCmdCount" type="xs:positiveInteger" minOccurs="0" />
+          <xs:attribute
+            name="eppCmdCount"
+            type="xs:positiveInteger"
+            minOccurs="0"
+          />
         </xs:complexType>
       </xs:element>
     </xs:sequence>
@@ -705,6 +764,10 @@ A.4.  Change from 03 to 04
    2.  Remove special response elements
    3.  Add command counter to temporary unlock
    4.  Fix formatting and XML schema
+
+A.5.  Change from 04 to 05
+
+   1.  Expand info responses to be valid EPP
 
 Author's Address
 
