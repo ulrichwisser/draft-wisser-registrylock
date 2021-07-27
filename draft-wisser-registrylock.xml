@@ -64,7 +64,7 @@ please see http://xml.resource.org/authoring/README.html. -->
         <uri>https://www.internetstiftelsen.se</uri>
       </address>
     </author>
-    <date day="7" month="July" year="2021"/>
+    <date day="27" month="July" year="2021"/>
     <area>Applications and Real-Time Area</area>
     <workgroup>Registration Protocols Extensions</workgroup>
     <keyword>EPP</keyword>
@@ -393,9 +393,27 @@ S:  <response>
 S:    <result code="1000">
 S:      <msg>Command completed successfully</msg>
 S:    </result>
-S:    <resData>
 S:      <domain:infData
-...
+S:       xmlns:domain="urn:ietf:params:xml:ns:domain-1.0">
+S:        <domain:name>example.com</domain:name>
+S:        <domain:roid>EXAMPLE1-REP</domain:roid>
+S:        <domain:status s="ok"/>
+S:        <domain:registrant>jd1234</domain:registrant>
+S:        <domain:contact type="admin">sh8013</domain:contact>
+S:        <domain:contact type="tech">sh8013</domain:contact>
+S:        <domain:ns>
+S:          <domain:hostObj>ns1.example.com</domain:hostObj>
+S:          <domain:hostObj>ns1.example.net</domain:hostObj>
+S:        </domain:ns>
+S:        <domain:host>ns1.example.com</domain:host>
+S:        <domain:host>ns2.example.com</domain:host>
+S:        <domain:clID>ClientX</domain:clID>
+S:        <domain:crID>ClientY</domain:crID>
+S:        <domain:crDate>1999-04-03T22:00:00.0Z</domain:crDate>
+S:        <domain:upID>ClientX</domain:upID>
+S:        <domain:upDate>1999-12-03T09:00:00.0Z</domain:upDate>
+S:        <domain:exDate>2005-04-03T22:00:00.0Z</domain:exDate>
+S:        <domain:trDate>2000-04-08T09:00:00.0Z</domain:trDate>
 S:      </domain:infData>
 S:    </resData>
 S:    <extension>
@@ -423,9 +441,27 @@ S:  <response>
 S:    <result code="1000">
 S:      <msg>Command completed successfully</msg>
 S:    </result>
-S:    <resData>
 S:      <domain:infData
-...
+S:       xmlns:domain="urn:ietf:params:xml:ns:domain-1.0">
+S:        <domain:name>example.com</domain:name>
+S:        <domain:roid>EXAMPLE1-REP</domain:roid>
+S:        <domain:status s="ok"/>
+S:        <domain:registrant>jd1234</domain:registrant>
+S:        <domain:contact type="admin">sh8013</domain:contact>
+S:        <domain:contact type="tech">sh8013</domain:contact>
+S:        <domain:ns>
+S:          <domain:hostObj>ns1.example.com</domain:hostObj>
+S:          <domain:hostObj>ns1.example.net</domain:hostObj>
+S:        </domain:ns>
+S:        <domain:host>ns1.example.com</domain:host>
+S:        <domain:host>ns2.example.com</domain:host>
+S:        <domain:clID>ClientX</domain:clID>
+S:        <domain:crID>ClientY</domain:crID>
+S:        <domain:crDate>1999-04-03T22:00:00.0Z</domain:crDate>
+S:        <domain:upID>ClientX</domain:upID>
+S:        <domain:upDate>1999-12-03T09:00:00.0Z</domain:upDate>
+S:        <domain:exDate>2005-04-03T22:00:00.0Z</domain:exDate>
+S:        <domain:trDate>2000-04-08T09:00:00.0Z</domain:trDate>
 S:      </domain:infData>
 S:    </resData>
 S:    <extension>
@@ -453,17 +489,35 @@ S:  <response>
 S:    <result code="1000">
 S:      <msg>Command completed successfully</msg>
 S:    </result>
-S:    <resData>
 S:      <domain:infData
-...
+S:       xmlns:domain="urn:ietf:params:xml:ns:domain-1.0">
+S:        <domain:name>example.com</domain:name>
+S:        <domain:roid>EXAMPLE1-REP</domain:roid>
+S:        <domain:status s="ok"/>
+S:        <domain:registrant>jd1234</domain:registrant>
+S:        <domain:contact type="admin">sh8013</domain:contact>
+S:        <domain:contact type="tech">sh8013</domain:contact>
+S:        <domain:ns>
+S:          <domain:hostObj>ns1.example.com</domain:hostObj>
+S:          <domain:hostObj>ns1.example.net</domain:hostObj>
+S:        </domain:ns>
+S:        <domain:host>ns1.example.com</domain:host>
+S:        <domain:host>ns2.example.com</domain:host>
+S:        <domain:clID>ClientX</domain:clID>
+S:        <domain:crID>ClientY</domain:crID>
+S:        <domain:crDate>1999-04-03T22:00:00.0Z</domain:crDate>
+S:        <domain:upID>ClientX</domain:upID>
+S:        <domain:upDate>1999-12-03T09:00:00.0Z</domain:upDate>
+S:        <domain:exDate>2005-04-03T22:00:00.0Z</domain:exDate>
+S:        <domain:trDate>2000-04-08T09:00:00.0Z</domain:trDate>
 S:      </domain:infData>
 S:    </resData>
 S:    <extension>
 S:      <regLock:infData
 S:        xmlns:regLock="urn:ietf:params:xml:ns:epp:registryLock-1.0">
 S:        <regLock:locked>1</regLock:locked>
-S:<regLock:unlockedUntil eppCmdCount="1">20000101T000000+0000
-S:</regLock:unlockedUntil>
+S:        <regLock:unlockedUntil eppCmdCount="1">20000101T000000+0000
+S:        </regLock:unlockedUntil>
 S:      </regLock:infData>
 S:    </extension>
 S:    <trID>
@@ -702,7 +756,11 @@ BEGIN
       <xs:element name="locked" type="xs:boolean"/>
       <xs:element name="unlockedUntil" type="xs:dateTime" minOccurs="0">
         <xs:complexType>
-          <xs:attribute name="eppCmdCount" type="xs:positiveInteger" minOccurs="0" />
+          <xs:attribute
+            name="eppCmdCount"
+            type="xs:positiveInteger"
+            minOccurs="0"
+          />
         </xs:complexType>
       </xs:element>
     </xs:sequence>
@@ -830,7 +888,7 @@ END
     </references>
     <section numbered="true" toc="default">
       <name>Change History</name>
-      <section anchor="change-00-to-01" numbered="true" toc="default">
+      <section numbered="true" toc="default">
         <name>Change from 00 to 01</name>
         <ol spacing="compact" type="1">
           <li>Corrected information for the &lt;create/&gt; command.</li>
@@ -838,7 +896,7 @@ END
           <li>Introduces resData element.</li>
         </ol>
       </section>
-      <section anchor="change-01-to-02" numbered="true" toc="default">
+      <section numbered="true" toc="default">
         <name>Change from 01 to 02</name>
         <ol spacing="compact" type="1">
           <li>Multiple spelling errors fixed.</li>
@@ -850,20 +908,26 @@ END
           <li>Forbid temporarily unlock for password authorization.</li>
         </ol>
       </section>
-      <section anchor="change-02-to-03" numbered="true" toc="default">
+      <section numbered="true" toc="default">
         <name>Change from 02 to 03</name>
         <ol spacing="compact" type="1">
           <li>Fix list styles for better readability</li>
           <li>Fix reference to W3C XML Schema</li>
         </ol>
       </section>
-      <section anchor="change-03-to-04" numbered="true" toc="default">
+      <section numbered="true" toc="default">
         <name>Change from 03 to 04</name>
         <ol spacing="compact" type="1">
           <li>Remove references to in-band authorization</li>
           <li>Remove special response elements</li>
           <li>Add command counter to temporary unlock</li>
           <li>Fix formatting and XML schema</li>
+        </ol>
+      </section>
+      <section numbered="true" toc="default">
+        <name>Change from 04 to 05</name>
+        <ol spacing="compact" type="1">
+          <li>Expand info responses to be valid EPP</li>
         </ol>
       </section>
     </section>
